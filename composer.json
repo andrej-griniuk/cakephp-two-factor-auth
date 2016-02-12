@@ -1,0 +1,33 @@
+{
+    "name": "andrej-griniuk/cakephp-two-factor-auth",
+    "description": "CakePHP auth component and provider fot two-factor authentication",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "auth", "two-factor"],
+    "homepage": "http://github.com/andrej-griniuk/cakephp-two-factor-auth",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andrej Griniuk",
+            "email": "andrej.griniuk@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0",
+        "robthree/twofactorauth": "^1.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "TwoFactorAuth\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TwoFactorAuth\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
