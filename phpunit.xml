@@ -5,7 +5,6 @@
     stopOnFailure="false"
     syntaxCheck="false"
     bootstrap="./tests/bootstrap.php"
-    backupGlobals="false"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
@@ -39,6 +38,12 @@
             <directory suffix=".php">./tests/</directory>
             <directory suffix=".ctp">./tests/</directory>
         </blacklist>
+        <!-- this is required, even if empty, until
+        https://github.com/sebastianbergmann/phpunit/issues/1872
+        is resolved -->
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
     </filter>
 
 </phpunit>
