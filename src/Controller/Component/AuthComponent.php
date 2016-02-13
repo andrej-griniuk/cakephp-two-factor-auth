@@ -3,6 +3,7 @@ namespace TwoFactorAuth\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Component\AuthComponent as CakeAuthComponent;
+use Cake\Core\Configure;
 use RobThree\Auth\TwoFactorAuth;
 
 /**
@@ -24,7 +25,14 @@ class AuthComponent extends CakeAuthComponent
     {
         parent::initialize($config);
 
-        $this->tfa = new TwoFactorAuth('My Company');
+        $this->tfa = new TwoFactorAuth(
+            Configure::read('TwoFactorAuth.issuer'),
+            Configure::read('TwoFactorAuth.digits'),
+            Configure::read('TwoFactorAuth.period'),
+            Configure::read('TwoFactorAuth.algorithm'),
+            Configure::read('TwoFactorAuth.qrcodeprovider'),
+            Configure::read('TwoFactorAuth.rngprovider')
+        );
     }
 
     /**
