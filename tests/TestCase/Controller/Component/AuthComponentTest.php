@@ -1,9 +1,12 @@
 <?php
 namespace TwoFactorAuth\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
-use TwoFactorAuth\Controller\Component\TwoFactorAuthComponent;
+use TwoFactorAuth\Controller\Component\AuthComponent;
 
 /**
  * TwoFactorAuth\Controller\Component\TwoFactorAuthComponent Test Case
@@ -14,9 +17,10 @@ class TwoFactorAuthComponentTest extends TestCase
     /**
      * Test subject
      *
-     * @var \TwoFactorAuth\Controller\Component\TwoFactorAuthComponent
+     * @var \TwoFactorAuth\Controller\Component\AuthComponent
      */
-    public $TwoFactorAuth;
+    public $Auth;
+    public $Controller;
 
     /**
      * setUp method
@@ -26,8 +30,12 @@ class TwoFactorAuthComponentTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $registry = new ComponentRegistry();
-        $this->TwoFactorAuth = new TwoFactorAuthComponent($registry);
+
+        $request = new Request();
+        $response = $this->getMock('Cake\Network\Response', ['stop']);
+
+        $this->Controller = new Controller($request, $response);
+        $this->Auth = new AuthComponent($this->Controller->components());
     }
 
     /**
@@ -37,7 +45,7 @@ class TwoFactorAuthComponentTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->TwoFactorAuth);
+        unset($this->Auth);
 
         parent::tearDown();
     }
@@ -49,6 +57,58 @@ class TwoFactorAuthComponentTest extends TestCase
      */
     public function testInitialization()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertInstanceOf('RobThree\Auth\TwoFactorAuth', $this->Auth->tfa);
+    }
+
+    public function testDefaultVerifyAction()
+    {
+        $this->protectedMethodCall($this->Auth, '_setDefaults');
+
+        $this->assertEquals([
+            'controller' => 'TwoFactorAuth',
+            'action' => 'verify',
+            'plugin' => 'TwoFactorAuth',
+            'prefix' => false,
+        ], $this->Auth->config('verifyAction'));
+    }
+
+    public function testVerifyAction()
+    {
+        $this->Auth->config('verifyAction', 'testAction');
+        $this->protectedMethodCall($this->Auth, '_setDefaults');
+
+        $this->assertEquals('testAction', $this->Auth->config('verifyAction'));
+    }
+
+    public function testVerifyCode()
+    {
+        $secret = $this->Auth->tfa->createSecret();
+        $code = $this->Auth->tfa->getCode($secret);
+
+        $this->assertTrue($this->Auth->tfa->verifyCode($secret, $code));
+    }
+
+    public function testVerifyCodeWrong()
+    {
+        $secret = $this->Auth->tfa->createSecret();
+        $code = (int)$this->Auth->tfa->getCode($secret) + 1;
+
+        $this->assertFalse($this->Auth->tfa->verifyCode($secret, (string)$code));
+    }
+
+    /**
+     * Call a protected method on an object
+     *
+     * @param Component $obj object
+     * @param string $name method to call
+     * @param array $args arguments to pass to the method
+     * @return mixed
+     */
+    public function protectedMethodCall($obj, $name, array $args = [])
+    {
+        $class = new \ReflectionClass($obj);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method->invokeArgs($obj, $args);
     }
 }
