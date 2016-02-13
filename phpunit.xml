@@ -5,6 +5,7 @@
     stopOnFailure="false"
     syntaxCheck="false"
     bootstrap="./tests/bootstrap.php"
+    backupGlobals="false"
     >
     <php>
         <ini name="memory_limit" value="-1"/>
