@@ -1,7 +1,7 @@
 <?php
 namespace TwoFactorAuth\Auth;
 
-use Cake\Auth\FormAuthenticate as CakeFormAuthenticate;
+use Cake\Auth\BaseAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Network\Request;
@@ -12,9 +12,9 @@ use Exception;
 use TwoFactorAuth\Controller\Component\AuthComponent;
 
 /**
- * TwoFactorAuth Authenticate
+ * Two factor form Authenticate
  */
-class FormAuthenticate extends CakeFormAuthenticate
+class FormAuthenticate extends BaseAuthenticate
 {
     /**
      * Constructor
@@ -40,10 +40,10 @@ class FormAuthenticate extends CakeFormAuthenticate
         $credentials = [];
         foreach (['username', 'password'] as $field) {
             if (!$credentials[$field] = $request->data($this->_config['fields'][$field])) {
-                $credentials[$field] = $request->session()->read('TwoFactorAuth.' . $field);
+                $credentials[$field] = $request->session()->read('TwoFactorAuth.credentials.' . $field);
             }
 
-            if (!$credentials[$field]) {
+            if (empty($credentials[$field]) || !is_string($credentials[$field])) {
                 return false;
             }
         }
@@ -106,14 +106,15 @@ class FormAuthenticate extends CakeFormAuthenticate
         }
 
         if ($secret = Hash::get($user, $this->config('fields.secret'))) {
-            $request->session()->write('TwoFactorAuth', $credentials);
+            $request->session()->write('TwoFactorAuth.credentials', $credentials);
             if (!$this->_verifyCode($secret, $request->data('code'), $response)) {
                 return false;
             }
 
-            unset($user[$this->config('fields.secret')]);
-            $request->session()->delete('TwoFactorAuth');
+            $request->session()->delete('TwoFactorAuth.credentials');
         }
+
+        unset($user[$this->config('fields.secret')]);
 
         return $user;
     }
