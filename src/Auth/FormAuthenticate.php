@@ -52,7 +52,8 @@ class FormAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * Verify one-time code
+     * Verify one-time code. If code not provided - redirect to verifyAction. If code provided and is not valid -
+     * set flash message and redirect to verifyAction. Otherwise - return true.
      *
      * @param string $secret user's secret
      * @param string $code one-time code
@@ -90,9 +91,11 @@ class FormAuthenticate extends BaseAuthenticate
      * Authenticates the identity contained in a request. Will use the `config.userModel`, and `config.fields`
      * to find POST data that is used to find a matching record in the `config.userModel`. Will return false if
      * there is no post data, either username or password is missing, or if the scope conditions have not been met.
+     * If user's secret field is not empty and no on-time submitted - will redirect to verifyAction. If on-time code
+     * submitted - will verify the code.
      *
      * @param Request $request The request that contains login information.
-     * @param Response $response Unused response object.
+     * @param Response $response Response object.
      * @return mixed False on login failure.  An array of User data on success.
      */
     public function authenticate(Request $request, Response $response)
