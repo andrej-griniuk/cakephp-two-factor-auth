@@ -24,7 +24,7 @@ composer require andrej-griniuk/cakephp-two-factor-auth
 
 First of all you need to add `secret` field to your users table (field name can be changed to `TwoFactorAuth.Form` authenticator configuration).
 ```sql
-ALTER TABLE  `users` ADD  `secret` VARCHAR( 255 ) NULL ;
+ALTER TABLE `users` ADD `secret` VARCHAR(255) NULL;
 ```
 
 Second, you need to load the plugin in your bootstrap.php
@@ -69,8 +69,6 @@ Then display it in your view:
 <img src="<?= $secretDataUri ?>" />
 ```
 See the library page for full documentation: https://github.com/RobThree/TwoFactorAuth
-
-...
 
 ## Bugs & Feedback
 
