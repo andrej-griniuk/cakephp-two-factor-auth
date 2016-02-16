@@ -5,7 +5,7 @@
 # TwoFactorAuth plugin for CakePHP
 
 This plugin provides two factor authentication functionality using [RobThree/TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth) library.
-Basically, it works similar way CakePHP `FormAuthenticate` does. After submitting correct username/password, if the use has `secret` field set, he will be asked to enter a one-time code.
+Basically, it works similar way CakePHP `FormAuthenticate` does. After submitting correct username/password, if the user has `secret` field set, he will be asked to enter a one-time code.
 **Attention:** it only provides authenticate provider and component and does not take care of users signup, management etc.
 
 ## Requirements
