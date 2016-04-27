@@ -8,6 +8,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 use Exception;
 use TwoFactorAuth\Controller\Component\AuthComponent;
 
@@ -40,7 +41,7 @@ class FormAuthenticate extends BaseAuthenticate
         $credentials = [];
         foreach (['username', 'password'] as $field) {
             if (!$credentials[$field] = $request->data($this->_config['fields'][$field])) {
-                $credentials[$field] = $request->session()->read('TwoFactorAuth.credentials.' . $field);
+                $credentials[$field] = $this->_decrypt($request->session()->read('TwoFactorAuth.credentials.' . $field));
             }
 
             if (empty($credentials[$field]) || !is_string($credentials[$field])) {
@@ -108,6 +109,10 @@ class FormAuthenticate extends BaseAuthenticate
             return false;
         }
 
+        foreach ($credentials as $field => $value) {
+            $credentials[$field] = $this->_encrypt($value);
+        }
+
         if ($secret = Hash::get($user, $this->config('fields.secret'))) {
             $request->session()->write('TwoFactorAuth.credentials', $credentials);
             if (!$this->_verifyCode($secret, $request->data('code'), $response)) {
@@ -120,5 +125,47 @@ class FormAuthenticate extends BaseAuthenticate
         unset($user[$this->config('fields.secret')]);
 
         return $user;
+    }
+
+    /**
+     * Encrypt a string
+     *
+     * @param $value string to encrypt
+     * @return string
+     */
+    protected function _encrypt($value)
+    {
+        return base64_encode(
+            Security::encrypt($value, $this->_encryptionKey())
+        );
+    }
+
+    /**
+     * Decrypt a base64 encoded string
+     *
+     * @param $value string to decrypt
+     * @return bool|string
+     */
+    protected function _decrypt($value)
+    {
+        if (empty($value)) {
+            return false;
+        }
+
+        return Security::decrypt(
+            base64_decode($value),
+            $this->_encryptionKey()
+        );
+    }
+
+    /**
+     * Return the encryption key to use.
+     * When a custom key is configured, it is used, otherwise it returns the security salt
+     *
+     * @return string
+     */
+    protected function _encryptionKey()
+    {
+        return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::salt();
     }
 }
