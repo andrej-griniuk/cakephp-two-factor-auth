@@ -130,7 +130,7 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Encrypt a string
      *
-     * @param $value string to encrypt
+     * @param string $value string to encrypt
      * @return string
      */
     protected function _encrypt($value)
@@ -143,7 +143,7 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Decrypt a base64 encoded string
      *
-     * @param $value string to decrypt
+     * @param string $value string to decrypt
      * @return bool|string
      */
     protected function _decrypt($value)
