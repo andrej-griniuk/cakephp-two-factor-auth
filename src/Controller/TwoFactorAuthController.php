@@ -3,11 +3,12 @@ namespace TwoFactorAuth\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use TwoFactorAuth\Controller\AppController;
 
 /**
  * TwoFactorAuth Controller
  */
-class TwoFactorAuthController extends Controller
+class TwoFactorAuthController extends AppController
 {
 
     /**
