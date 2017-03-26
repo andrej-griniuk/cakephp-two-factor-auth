@@ -5,6 +5,8 @@ use Cake\Event\Event;
 
 /**
  * TwoFactorAuth Controller
+ *
+ * @codeCoverageIgnore
  */
 class TwoFactorAuthController extends AppController
 {
@@ -14,7 +16,7 @@ class TwoFactorAuthController extends AppController
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\Event $event An Event instance
-     * @return \Cake\Network\Response|null
+     * @return \Cake\Network\Response|void
      * @link http://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeFilter(Event $event)
