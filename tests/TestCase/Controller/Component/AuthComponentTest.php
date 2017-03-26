@@ -3,7 +3,6 @@ namespace TwoFactorAuth\Test\TestCase\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
-use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use TwoFactorAuth\Controller\Component\AuthComponent;

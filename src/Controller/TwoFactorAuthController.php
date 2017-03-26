@@ -5,8 +5,6 @@ use Cake\Event\Event;
 
 /**
  * TwoFactorAuth Controller
- *
- * @codeCoverageIgnore
  */
 class TwoFactorAuthController extends AppController
 {

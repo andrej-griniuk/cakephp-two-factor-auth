@@ -37,13 +37,10 @@
 
             <directory suffix=".php">./tests/</directory>
             <directory suffix=".ctp">./tests/</directory>
+
+            <file>./src/Controller/AppController.php</file>
+            <file>./src/Controller/TwoFactorAuthController.php</file>
         </blacklist>
-        <!-- this is required, even if empty, until
-        https://github.com/sebastianbergmann/phpunit/issues/1872
-        is resolved -->
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">src</directory>
-        </whitelist>
     </filter>
 
 </phpunit>
