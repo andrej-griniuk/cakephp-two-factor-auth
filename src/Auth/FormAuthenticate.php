@@ -4,8 +4,8 @@ namespace TwoFactorAuth\Auth;
 use Cake\Auth\BaseAuthenticate;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -20,7 +20,7 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Constructor
      *
-     * @param ComponentRegistry $registry The Component registry used on this request.
+     * @param \Cake\Controller\ComponentRegistry $registry The Component registry used on this request.
      * @param array $config Array of config to use.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
@@ -33,14 +33,14 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Get user's credentials (username and password) from either session or request data
      *
-     * @param Request $request Request instance
+     * @param \Cake\Http\ServerRequest $request Request instance
      * @return array|bool
      */
-    protected function _getCredentials(Request $request)
+    protected function _getCredentials(ServerRequest $request)
     {
         $credentials = [];
         foreach (['username', 'password'] as $field) {
-            if (!$credentials[$field] = $request->data($this->_config['fields'][$field])) {
+            if (!$credentials[$field] = $request->getData($this->_config['fields'][$field])) {
                 $credentials[$field] = $this->_decrypt($request->session()->read('TwoFactorAuth.credentials.' . $field));
             }
 
@@ -58,10 +58,10 @@ class FormAuthenticate extends BaseAuthenticate
      *
      * @param string $secret user's secret
      * @param string $code one-time code
-     * @param Response $response response instance
-     * @var AuthComponent $Auth used Auth component
+     * @param \Cake\Http\Response $response response instance
+     * @var \TwoFactorAuth\Controller\Component\AuthComponent $Auth used Auth component
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
     protected function _verifyCode($secret, $code, Response $response)
     {
@@ -70,17 +70,17 @@ class FormAuthenticate extends BaseAuthenticate
             throw new Exception('TwoFactorAuth.Auth component has to be used for authentication.');
         }
 
-        $verifyAction = Router::url($Auth->config('verifyAction'), true);
+        $verifyAction = Router::url($Auth->getConfig('verifyAction'), true);
 
         if ($code === null) {
-            $response->location($verifyAction);
+            $this->_registry->getController()->response = $response->withLocation($verifyAction);
 
             return false;
         }
 
         if (!$Auth->verifyCode($secret, $code)) {
-            $Auth->flash(__d('TwoFactorAuth', 'Invalid two-step verification code.'));
-            $response->location($verifyAction);
+            $this->_registry->getController()->response = $response->withLocation($verifyAction);
+            $Auth->Flash->error(__d('TwoFactorAuth', 'Invalid two-step verification code.'), ['key' => 'two-factor-auth']);
 
             return false;
         }
@@ -95,11 +95,11 @@ class FormAuthenticate extends BaseAuthenticate
      * If user's secret field is not empty and no on-time submitted - will redirect to verifyAction. If on-time code
      * submitted - will verify the code.
      *
-     * @param Request $request The request that contains login information.
-     * @param Response $response Response object.
-     * @return mixed False on login failure.  An array of User data on success.
+     * @param \Cake\Http\ServerRequest $request The request that contains login information.
+     * @param \Cake\Http\Response $response Response object.
+     * @return array|bool False on login failure.  An array of User data on success.
      */
-    public function authenticate(Request $request, Response $response)
+    public function authenticate(ServerRequest $request, Response $response)
     {
         if (!$credentials = $this->_getCredentials($request)) {
             return false;
@@ -113,16 +113,17 @@ class FormAuthenticate extends BaseAuthenticate
             $credentials[$field] = $this->_encrypt($value);
         }
 
-        if ($secret = Hash::get($user, $this->config('fields.secret'))) {
+        $secretField = $this->getConfig('fields.secret');
+        if ($secret = Hash::get($user, $secretField)) {
             $request->session()->write('TwoFactorAuth.credentials', $credentials);
-            if (!$this->_verifyCode($secret, $request->data('code'), $response)) {
+            if (!$this->_verifyCode($secret, $request->getData('code'), $response)) {
                 return false;
             }
 
             $request->session()->delete('TwoFactorAuth.credentials');
         }
 
-        unset($user[$this->config('fields.secret')]);
+        unset($user[$secretField]);
 
         return $user;
     }

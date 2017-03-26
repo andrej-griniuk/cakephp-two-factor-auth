@@ -13,11 +13,11 @@
     ],
     "require": {
         "php": ">=5.4.16",
-        "cakephp/cakephp": "~3.0",
+        "cakephp/cakephp": "3.4.*",
         "robthree/twofactorauth": "^1.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
+        "phpunit/phpunit": "^5.7",
         "friendsofcake/cakephp-test-utilities": "dev-master",
         "cakephp/cakephp-codesniffer": "dev-master",
         "satooshi/php-coveralls": "dev-master"

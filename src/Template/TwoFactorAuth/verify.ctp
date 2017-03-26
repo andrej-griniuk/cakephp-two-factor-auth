@@ -1,9 +1,10 @@
 <?php
 /**
- * @var \App\View\AppView $this
+ * @var \Cake\View\View $this
  * @var array $loginAction
  */
+echo $this->Flash->render('two-factor-auth');
 echo $this->Form->create(null, ['url' => $loginAction]);
-echo $this->Form->input('code', ['label' => __('Verification code')]);
+echo $this->Form->control('code', ['label' => __('Verification code')]);
 echo $this->Form->button(__('Verify'));
 echo $this->Form->end();

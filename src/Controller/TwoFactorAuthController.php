@@ -1,9 +1,7 @@
 <?php
 namespace TwoFactorAuth\Controller;
 
-use Cake\Controller\Controller;
 use Cake\Event\Event;
-use TwoFactorAuth\Controller\AppController;
 
 /**
  * TwoFactorAuth Controller
@@ -31,6 +29,6 @@ class TwoFactorAuthController extends AppController
      */
     public function verify()
     {
-        $this->set('loginAction', $this->Auth->config('loginAction'));
+        $this->set('loginAction', $this->Auth->getConfig('loginAction'));
     }
 }

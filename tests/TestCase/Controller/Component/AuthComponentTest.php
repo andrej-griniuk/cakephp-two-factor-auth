@@ -32,7 +32,7 @@ class TwoFactorAuthComponentTest extends TestCase
         parent::setUp();
 
         $request = new Request();
-        $response = $this->getMock('Cake\Network\Response', ['stop']);
+        $response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['stop'])->getMock();
 
         $this->Controller = new Controller($request, $response);
         $this->Auth = new AuthComponent($this->Controller->components());
@@ -69,15 +69,15 @@ class TwoFactorAuthComponentTest extends TestCase
             'action' => 'verify',
             'plugin' => 'TwoFactorAuth',
             'prefix' => false,
-        ], $this->Auth->config('verifyAction'));
+        ], $this->Auth->getConfig('verifyAction'));
     }
 
     public function testVerifyAction()
     {
-        $this->Auth->config('verifyAction', 'testAction');
+        $this->Auth->setConfig('verifyAction', 'testAction');
         $this->protectedMethodCall($this->Auth, '_setDefaults');
 
-        $this->assertEquals('testAction', $this->Auth->config('verifyAction'));
+        $this->assertEquals('testAction', $this->Auth->getConfig('verifyAction'));
     }
 
     public function testVerifyCode()

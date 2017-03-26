@@ -9,16 +9,6 @@ use TwoFactorAuth\Controller\TwoFactorAuthController;
  */
 class TwoFactorAuthControllerTest extends IntegrationTestCase
 {
-
-    /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        //'plugin.two_factor_auth.two_factor_auth'
-    ];
-
     /**
      * Test index method
      *
@@ -27,6 +17,5 @@ class TwoFactorAuthControllerTest extends IntegrationTestCase
     public function testVerify()
     {
         $this->assertEquals(true, true);
-        //$this->markTestIncomplete('Not implemented yet.');
     }
 }
