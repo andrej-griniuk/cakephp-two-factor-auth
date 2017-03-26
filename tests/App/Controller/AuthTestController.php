@@ -80,11 +80,12 @@ class AuthTestController extends Controller
      *
      * @param mixed $url
      * @param mixed $status
-     * @return void|\Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function redirect($url, $status = null)
     {
         $this->testUrl = Router::url($url);
+
         return parent::redirect($url, $status);
     }
 

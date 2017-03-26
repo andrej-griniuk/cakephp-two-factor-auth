@@ -617,6 +617,7 @@ class FormAuthenticateTest extends TestCase
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method->invokeArgs($obj, $args);
     }
 
