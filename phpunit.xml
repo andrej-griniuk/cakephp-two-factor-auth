@@ -37,9 +37,6 @@
 
             <directory suffix=".php">./tests/</directory>
             <directory suffix=".ctp">./tests/</directory>
-
-            <file>./src/Controller/AppController.php</file>
-            <file>./src/Controller/TwoFactorAuthController.php</file>
         </blacklist>
     </filter>
 
