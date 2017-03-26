@@ -42,9 +42,4 @@
             <file>./src/TwoFactorAuthController.php</file>
         </blacklist>
     </filter>
-
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
-
 </phpunit>
