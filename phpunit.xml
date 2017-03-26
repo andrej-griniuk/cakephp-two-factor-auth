@@ -41,5 +41,13 @@
             <file>./src/AppController.php</file>
             <file>./src/TwoFactorAuthController.php</file>
         </blacklist>
+        <!-- this is required, even if empty, until
+        https://github.com/sebastianbergmann/phpunit/issues/1872
+        is resolved -->
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/Auth</directory>
+            <directory suffix=".php">./src/Controller/Component</directory>
+        </whitelist>
     </filter>
+
 </phpunit>
