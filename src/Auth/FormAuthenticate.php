@@ -59,7 +59,7 @@ class FormAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * Verify one-time code. If code not provided - redirect to verifyAction. If code provided and is not valid -
+     * Verify remember cookie. If cookie not set, verify one-time code. If code not provided - redirect to verifyAction. If code provided and is not valid -
      * set flash message and redirect to verifyAction. Otherwise - return true.
      *
      * @param string $secret user's secret
@@ -77,7 +77,7 @@ class FormAuthenticate extends BaseAuthenticate
         }
 
         $this->_checkCookieLoaded();
-        $cookie =  $this->_registry->getController()->Cookie->read($this->getConfig('cookie.name'));
+        $cookie = $this->_registry->getController()->Cookie->read($this->getConfig('cookie.name'));
 
         if (isset($cookie['secret']) && $cookie['secret'] === $secret) {
             return true;

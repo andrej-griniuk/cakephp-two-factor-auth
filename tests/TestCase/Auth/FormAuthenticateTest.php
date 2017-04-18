@@ -604,6 +604,11 @@ class FormAuthenticateTest extends TestCase
         $this->assertEquals($encryptionKey, $this->protectedMethodCall($this->auth, '_encryptionKey'));
     }
 
+    /**
+     * Test if cookie is set when remember is checked
+     *
+     * @return void
+     */
     public function testloginWithRememberTrue()
     {
         $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
@@ -631,6 +636,11 @@ class FormAuthenticateTest extends TestCase
         $this->assertEquals(['secret' => $secret], $this->Controller->Cookie->read('TwoFactorAuth'));
     }
 
+    /**
+     * Test if cookie is not set if remember isn't checked
+     *
+     * @return void
+     */
     public function testLoginWithRememberFalse()
     {
         $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
@@ -657,6 +667,11 @@ class FormAuthenticateTest extends TestCase
         $this->assertNull($this->Controller->Cookie->read('TwoFactorAuth'));
     }
 
+    /**
+     * Test if no secret is asked when cookie is set
+     *
+     * @return void
+     */
     public function testRememberedLogin()
     {
         $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
