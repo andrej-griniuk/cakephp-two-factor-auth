@@ -72,12 +72,12 @@ class FormAuthenticateTest extends TestCase
     {
         $this->auth->setConfig([
             'userModel' => 'AuthUsers',
-            'fields' => ['username' => 'user', 'password' => 'password', 'secret' => 'secret']
+            'fields' => ['username' => 'user', 'password' => 'password', 'secret' => 'secret', 'remember' => 'remember']
         ]);
 
         $this->assertEquals('AuthUsers', $this->auth->getConfig('userModel'));
         $this->assertEquals(
-            ['username' => 'user', 'password' => 'password', 'secret' => 'secret'],
+            ['username' => 'user', 'password' => 'password', 'secret' => 'secret', 'remember' => 'remember'],
             $this->auth->getConfig('fields')
         );
     }
@@ -602,6 +602,79 @@ class FormAuthenticateTest extends TestCase
         Configure::write('TwoFactorAuth.encryptionKey', $encryptionKey);
 
         $this->assertEquals($encryptionKey, $this->protectedMethodCall($this->auth, '_encryptionKey'));
+    }
+
+    public function testloginWithRememberTrue()
+    {
+        $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
+
+        $this->request = $this->request->withData('code', $this->Controller->Auth->tfa->getCode($secret));
+        $this->request = $this->request->withData('remember', 1);
+        $this->request->session()->write([
+            'TwoFactorAuth' => [
+                'credentials' => [
+                    'username' => $this->_encrypt('nate'),
+                    'password' => $this->_encrypt('password')
+                ]
+            ]
+        ]);
+        $this->response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['withLocation'])->getMock();
+
+        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
+
+        $this->response->expects($this->never())
+            ->method('withLocation')
+            ->will($this->returnValue(true));
+
+        $this->auth->authenticate($this->request, $this->response);
+
+        $this->assertEquals(['secret' => $secret], $this->Controller->Cookie->read('TwoFactorAuth'));
+    }
+
+    public function testLoginWithRememberFalse()
+    {
+        $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
+
+        $this->request = $this->request->withData('code', $this->Controller->Auth->tfa->getCode($secret));
+        $this->request = $this->request->withData('remember', 0);
+        $this->request->session()->write([
+            'TwoFactorAuth' => [
+                'credentials' => [
+                    'username' => $this->_encrypt('nate'),
+                    'password' => $this->_encrypt('password')
+                ]
+            ]
+        ]);
+        $this->response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['withLocation'])->getMock();
+
+        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
+
+        $this->response->expects($this->never())
+            ->method('withLocation')
+            ->will($this->returnValue(true));
+
+        $this->auth->authenticate($this->request, $this->response);
+        $this->assertNull($this->Controller->Cookie->read('TwoFactorAuth'));
+    }
+
+    public function testRememberedLogin()
+    {
+        $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
+
+        $this->Controller->loadComponent('Cookie');
+        $this->Controller->Cookie->write('TwoFactorAuth', compact('secret'));
+        $this->request->session()->write([
+            'TwoFactorAuth' => [
+                'credentials' => [
+                    'username' => $this->_encrypt('nate'),
+                    'password' => $this->_encrypt('password')
+                ]
+            ]
+        ]);
+
+        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
+
+        $this->assertTrue($this->protectedMethodCall($this->auth, '_verifyCode', [$secret, null, $this->response]));
     }
 
     /**
