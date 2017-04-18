@@ -48,7 +48,27 @@ class AppController extends Controller
         $this->loadComponent('Security');
         $this->loadComponent('Csrf');
         $this->loadComponent('TwoFactorAuth.Auth', [
-            'authenticate' => ['TwoFactorAuth.Form'],
+            'authenticate' => [
+                'TwoFactorAuth.Form' => [
+                    'fields' => [
+                        'username' => 'username',
+                        'password' => 'password',
+                        'secret' => 'secret', // database field
+                        'remember' => 'remember' // checkbox form field name
+                    ],
+                    'cookie' => [
+                        'name' => 'TwoFactorAuth',
+                        'httpOnly' => true,
+                        'expires' => '+30 days'
+                    ]
+                ],
+                'verifyAction' => [
+                    'prefix' => false,
+                    'controller' => 'TwoFactorAuth',
+                    'action' => 'verify',
+                    'plugin' => 'TwoFactorAuth'
+                ],
+            ],
         ]);
     }
 }
