@@ -188,6 +188,11 @@ class FormAuthenticate extends BaseAuthenticate
         return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::salt();
     }
 
+    /**
+     * Check if the CookieComponent is loaded - if not, load it
+     *
+     * @return void
+     */
     protected function _checkCookieLoaded()
     {
         if (!isset($this->_registry->getController()->Cookie)) {
