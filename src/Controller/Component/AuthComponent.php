@@ -65,6 +65,6 @@ class AuthComponent extends CakeAuthComponent
      */
     public function verifyCode($secret, $code)
     {
-        return $this->tfa->verifyCode($secret, $code);
+        return $this->tfa->verifyCode($secret, str_replace(' ', '', $code));
     }
 }
