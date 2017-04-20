@@ -214,7 +214,7 @@ class FormAuthenticate extends BaseAuthenticate
     /**
      * Get remembered user secret from cookie
      *
-     * @param $secret
+     * @param string $secret Secret to remember
      */
     protected function _setRememberedSecret($secret)
     {
