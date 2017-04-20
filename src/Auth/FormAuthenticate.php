@@ -26,6 +26,12 @@ class FormAuthenticate extends BaseAuthenticate
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         $this->_defaultConfig['fields']['secret'] = 'secret';
+        $this->_defaultConfig['fields']['remember'] = 'remember';
+        $this->_defaultConfig['cookie'] = [
+            'name' => 'TwoFactorAuth',
+            'httpOnly' => true,
+            'expires' => '+30 days'
+        ];
 
         parent::__construct($registry, $config);
     }
@@ -53,7 +59,7 @@ class FormAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * Verify one-time code. If code not provided - redirect to verifyAction. If code provided and is not valid -
+     * Verify remember cookie. If cookie not set, verify one-time code. If code not provided - redirect to verifyAction. If code provided and is not valid -
      * set flash message and redirect to verifyAction. Otherwise - return true.
      *
      * @param string $secret user's secret
@@ -68,6 +74,13 @@ class FormAuthenticate extends BaseAuthenticate
         $Auth = $this->_registry->getController()->Auth;
         if (!($Auth instanceof AuthComponent)) {
             throw new Exception('TwoFactorAuth.Auth component has to be used for authentication.');
+        }
+
+        $this->_checkCookieLoaded();
+        $cookie = $this->_registry->getController()->Cookie->read($this->getConfig('cookie.name'));
+
+        if (isset($cookie['secret']) && $cookie['secret'] === $secret) {
+            return true;
         }
 
         $verifyAction = Router::url($Auth->getConfig('verifyAction'), true);
@@ -120,6 +133,11 @@ class FormAuthenticate extends BaseAuthenticate
                 return false;
             }
 
+            if ($request->getData($this->getConfig('fields.remember'))) {
+                $this->_registry->getController()->Cookie->configKey($this->getConfig('cookie.name'), $this->getConfig('cookie'));
+                $this->_registry->getController()->Cookie->write($this->getConfig('cookie.name'), compact('secret'));
+            }
+
             $request->session()->delete('TwoFactorAuth.credentials');
         }
 
@@ -168,5 +186,17 @@ class FormAuthenticate extends BaseAuthenticate
     protected function _encryptionKey()
     {
         return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::salt();
+    }
+
+    /**
+     * Check if the CookieComponent is loaded - if not, load it
+     *
+     * @return void
+     */
+    protected function _checkCookieLoaded()
+    {
+        if (!isset($this->_registry->getController()->Cookie)) {
+            $this->_registry->getController()->loadComponent('Cookie');
+        }
     }
 }
