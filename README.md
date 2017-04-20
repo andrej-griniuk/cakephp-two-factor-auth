@@ -54,13 +54,14 @@ class AppController extends Controller
                         'username' => 'username',
                         'password' => 'password',
                         'secret' => 'secret', // database field
-                        'remember' => 'remember' // checkbox form field name
+                        'remember' => 'remember' // checkbox form field name for "Trust this device" feature
                     ],
-                    'cookie' => [
+                    'remember' => true, // enabled "Trust this device" feature
+                    'cookie' => [ // cookie settings for "Trust this device" feature
                         'name' => 'TwoFactorAuth',
                         'httpOnly' => true,
                         'expires' => '+30 days'
-                    ]
+                    ],
                 ],
                 'verifyAction' => [
                     'prefix' => false,

@@ -30,5 +30,6 @@ class TwoFactorAuthController extends AppController
     public function verify()
     {
         $this->set('loginAction', $this->Auth->getConfig('loginAction'));
+        $this->set('remember', $this->Auth->getConfig('TwoFactorAuth.remember'));
     }
 }

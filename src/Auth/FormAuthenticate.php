@@ -27,6 +27,7 @@ class FormAuthenticate extends BaseAuthenticate
     {
         $this->_defaultConfig['fields']['secret'] = 'secret';
         $this->_defaultConfig['fields']['remember'] = 'remember';
+        $this->_defaultConfig['remember'] = false;
         $this->_defaultConfig['cookie'] = [
             'name' => 'TwoFactorAuth',
             'httpOnly' => true,
@@ -76,10 +77,7 @@ class FormAuthenticate extends BaseAuthenticate
             throw new Exception('TwoFactorAuth.Auth component has to be used for authentication.');
         }
 
-        $this->_checkCookieLoaded();
-        $cookie = $this->_registry->getController()->Cookie->read($this->getConfig('cookie.name'));
-
-        if (isset($cookie['secret']) && $cookie['secret'] === $secret) {
+        if ($this->getConfig('remember') && $this->_getRememberedSecret() === $secret) {
             return true;
         }
 
@@ -133,9 +131,8 @@ class FormAuthenticate extends BaseAuthenticate
                 return false;
             }
 
-            if ($request->getData($this->getConfig('fields.remember'))) {
-                $this->_registry->getController()->Cookie->configKey($this->getConfig('cookie.name'), $this->getConfig('cookie'));
-                $this->_registry->getController()->Cookie->write($this->getConfig('cookie.name'), compact('secret'));
+            if ($this->getConfig('remember') && $request->getData($this->getConfig('fields.remember'))) {
+                $this->_setRememberedSecret($secret);
             }
 
             $request->session()->delete('TwoFactorAuth.credentials');
@@ -189,14 +186,39 @@ class FormAuthenticate extends BaseAuthenticate
     }
 
     /**
-     * Check if the CookieComponent is loaded - if not, load it
+     * Return controller CookieComponent. If not loaded, load it
      *
-     * @return void
+     * @return \Cake\Controller\Component\CookieComponent
      */
-    protected function _checkCookieLoaded()
+    protected function _getCookieComponent()
     {
-        if (!isset($this->_registry->getController()->Cookie)) {
+        if (!$this->_registry->getController()->components()->has('Cookie')) {
             $this->_registry->getController()->loadComponent('Cookie');
         }
+
+        return $this->_registry->getController()->Cookie;
+    }
+
+    /**
+     * Remember user secret in a cookie
+     *
+     * @return string
+     */
+    protected function _getRememberedSecret()
+    {
+        $cookie = (array)$this->_getCookieComponent()->read($this->getConfig('cookie.name'));
+
+        return Hash::get($cookie, 'secret');
+    }
+
+    /**
+     * Get remembered user secret from cookie
+     *
+     * @param $secret
+     */
+    protected function _setRememberedSecret($secret)
+    {
+        $this->_getCookieComponent()->configKey($this->getConfig('cookie.name'), $this->getConfig('cookie'));
+        $this->_getCookieComponent()->write($this->getConfig('cookie.name'), compact('secret'));
     }
 }

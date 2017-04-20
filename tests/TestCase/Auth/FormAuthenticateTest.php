@@ -609,7 +609,7 @@ class FormAuthenticateTest extends TestCase
      *
      * @return void
      */
-    public function testloginWithRememberTrue()
+    public function testLoginWithRememberTrue()
     {
         $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
 
@@ -631,6 +631,7 @@ class FormAuthenticateTest extends TestCase
             ->method('withLocation')
             ->will($this->returnValue(true));
 
+        $this->auth->setConfig('remember', true);
         $this->auth->authenticate($this->request, $this->response);
 
         $this->assertEquals(['secret' => $secret], $this->Controller->Cookie->read('TwoFactorAuth'));
@@ -663,6 +664,7 @@ class FormAuthenticateTest extends TestCase
             ->method('withLocation')
             ->will($this->returnValue(true));
 
+        $this->auth->setConfig('remember', true);
         $this->auth->authenticate($this->request, $this->response);
         $this->assertNull($this->Controller->Cookie->read('TwoFactorAuth'));
     }
@@ -689,6 +691,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
 
+        $this->auth->setConfig('remember', true);
         $this->assertTrue($this->protectedMethodCall($this->auth, '_verifyCode', [$secret, null, $this->response]));
     }
 
