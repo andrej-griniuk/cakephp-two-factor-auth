@@ -62,12 +62,12 @@ class AppController extends Controller
                         'httpOnly' => true,
                         'expires' => '+30 days'
                     ],
-                ],
-                'verifyAction' => [
-                    'prefix' => false,
-                    'controller' => 'TwoFactorAuth',
-                    'action' => 'verify',
-                    'plugin' => 'TwoFactorAuth'
+                    'verifyAction' => [
+                        'prefix' => false,
+                        'controller' => 'TwoFactorAuth',
+                        'action' => 'verify',
+                        'plugin' => 'TwoFactorAuth'
+                    ],
                 ],
             ],
         ]);
