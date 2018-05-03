@@ -38,7 +38,7 @@ Cake\Core\Configure::write('App', [
     ]
 ]);
 Cake\Core\Configure::write('debug', true);
-Cake\Utility\Security::salt('justarandomsaltjustarandomsaltjustarandomsaltjustarandomsaltjustarandomsalt');
+Cake\Utility\Security::setSalt('justarandomsaltjustarandomsaltjustarandomsaltjustarandomsaltjustarandomsalt');
 
 $TMP = new \Cake\Filesystem\Folder(TMP);
 $TMP->create(TMP . 'cache/models', 0777);
