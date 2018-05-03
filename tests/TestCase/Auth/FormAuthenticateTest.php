@@ -514,10 +514,8 @@ class FormAuthenticateTest extends TestCase
             ['username' => 'mariano']
         );
         $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'mypass'
-        ];
+        $request = $request->withData('username', 'mariano')
+            ->withData('password', 'mypass');
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
             'id' => 1,
