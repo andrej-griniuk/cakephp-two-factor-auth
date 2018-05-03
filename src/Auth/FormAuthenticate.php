@@ -182,7 +182,7 @@ class FormAuthenticate extends BaseAuthenticate
      */
     protected function _encryptionKey()
     {
-        return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::salt();
+        return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::getSalt();
     }
 
     /**
