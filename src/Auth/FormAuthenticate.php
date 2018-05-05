@@ -84,13 +84,13 @@ class FormAuthenticate extends BaseAuthenticate
         $verifyAction = Router::url($Auth->getConfig('verifyAction'), true);
 
         if ($code === null) {
-            $this->_registry->getController()->response = $response->withLocation($verifyAction);
+            $this->_registry->getController()->setResponse($response->withLocation($verifyAction));
 
             return false;
         }
 
         if (!$Auth->verifyCode($secret, $code)) {
-            $this->_registry->getController()->response = $response->withLocation($verifyAction);
+            $this->_registry->getController()->setResponse($response->withLocation($verifyAction));
             $Auth->Flash->error(__d('TwoFactorAuth', 'Invalid two-step verification code.'), ['key' => 'two-factor-auth']);
 
             return false;
@@ -109,6 +109,7 @@ class FormAuthenticate extends BaseAuthenticate
      * @param \Cake\Http\ServerRequest $request The request that contains login information.
      * @param \Cake\Http\Response $response Response object.
      * @return array|bool False on login failure.  An array of User data on success.
+     * @throws Exception
      */
     public function authenticate(ServerRequest $request, Response $response)
     {

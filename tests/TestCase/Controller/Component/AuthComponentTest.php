@@ -59,6 +59,9 @@ class TwoFactorAuthComponentTest extends TestCase
         $this->assertInstanceOf('RobThree\Auth\TwoFactorAuth', $this->Auth->tfa);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testDefaultVerifyAction()
     {
         $this->protectedMethodCall($this->Auth, '_setDefaults');
@@ -71,6 +74,9 @@ class TwoFactorAuthComponentTest extends TestCase
         ], $this->Auth->getConfig('verifyAction'));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testVerifyAction()
     {
         $this->Auth->setConfig('verifyAction', 'testAction');
@@ -79,6 +85,9 @@ class TwoFactorAuthComponentTest extends TestCase
         $this->assertEquals('testAction', $this->Auth->getConfig('verifyAction'));
     }
 
+    /**
+     * @throws \RobThree\Auth\TwoFactorAuthException
+     */
     public function testVerifyCode()
     {
         $secret = $this->Auth->tfa->createSecret();
@@ -87,6 +96,9 @@ class TwoFactorAuthComponentTest extends TestCase
         $this->assertTrue($this->Auth->tfa->verifyCode($secret, $code));
     }
 
+    /**
+     * @throws \RobThree\Auth\TwoFactorAuthException
+     */
     public function testVerifyCodeWrong()
     {
         $secret = $this->Auth->tfa->createSecret();
@@ -102,6 +114,7 @@ class TwoFactorAuthComponentTest extends TestCase
      * @param string $name method to call
      * @param array $args arguments to pass to the method
      * @return mixed
+     * @throws \ReflectionException
      */
     public function protectedMethodCall($obj, $name, array $args = [])
     {
