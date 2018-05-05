@@ -116,7 +116,7 @@ class FormAuthenticateTest extends TestCase
             'fields' => ['username' => 'user', 'password' => 'password', 'secret' => 'secret']
         ]);
 
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth.credentials' => [
                 'username' => $this->_encrypt('testUsername'),
                 'password' => $this->_encrypt('testPassword'),
@@ -144,7 +144,7 @@ class FormAuthenticateTest extends TestCase
         $this->request = $this->request
             ->withData('user', 'testUsernameFromRequest')
             ->withData('password', 'testPasswordFromRequest');
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth.credentials' => [
                 'username' => $this->_encrypt('testUsername'),
                 'password' => $this->_encrypt('testPassword')
@@ -202,7 +202,7 @@ class FormAuthenticateTest extends TestCase
     public function testAuthenticateWithSecretCodeInvalid()
     {
         $this->request = $this->request->withData('code', '123');
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),
@@ -222,7 +222,7 @@ class FormAuthenticateTest extends TestCase
         $this->assertFalse($this->auth->authenticate($this->request, $this->response));
         $this->assertEquals(
             'Invalid two-step verification code.',
-            $this->request->session()->read('Flash.two-factor-auth.0.message')
+            $this->request->getSession()->read('Flash.two-factor-auth.0.message')
         );
     }
 
@@ -233,7 +233,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testAuthenticateWithSecretCodeNone()
     {
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),
@@ -263,7 +263,7 @@ class FormAuthenticateTest extends TestCase
         $secret = TableRegistry::get('Users')->find()->where(['username' => 'nate'])->first()->get('secret');
 
         $this->request = $this->request->withData('code', $this->Controller->Auth->tfa->getCode($secret));
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),
@@ -291,7 +291,7 @@ class FormAuthenticateTest extends TestCase
             $this->auth->authenticate($this->request, $this->response)
         );
 
-        $this->assertNull($this->request->session()->read('TwoFactorAuth.credentials'));
+        $this->assertNull($this->request->getSession()->read('TwoFactorAuth.credentials'));
     }
 
     /**
@@ -304,7 +304,7 @@ class FormAuthenticateTest extends TestCase
     public function testWrongAuthComponentUsed()
     {
         $this->request = $this->request->withData('code', '123');
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),
@@ -514,10 +514,8 @@ class FormAuthenticateTest extends TestCase
             ['username' => 'mariano']
         );
         $request = new ServerRequest('posts/index');
-        $request->data = [
-            'username' => 'mariano',
-            'password' => 'mypass'
-        ];
+        $request = $request->withData('username', 'mariano')
+            ->withData('password', 'mypass');
         $result = $this->auth->authenticate($request, $this->response);
         $expected = [
             'id' => 1,
@@ -586,7 +584,7 @@ class FormAuthenticateTest extends TestCase
     public function testEncryptionKeySecuritySalt()
     {
         $salt = 'this is just another random salt which should not be used';
-        Security::salt($salt);
+        Security::setSalt($salt);
 
         $this->assertEquals($salt, $this->protectedMethodCall($this->auth, '_encryptionKey'));
     }
@@ -615,7 +613,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->request = $this->request->withData('code', $this->Controller->Auth->tfa->getCode($secret));
         $this->request = $this->request->withData('remember', 1);
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),
@@ -648,7 +646,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->request = $this->request->withData('code', $this->Controller->Auth->tfa->getCode($secret));
         $this->request = $this->request->withData('remember', 0);
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),
@@ -680,7 +678,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->Controller->loadComponent('Cookie');
         $this->Controller->Cookie->write('TwoFactorAuth', compact('secret'));
-        $this->request->session()->write([
+        $this->request->getSession()->write([
             'TwoFactorAuth' => [
                 'credentials' => [
                     'username' => $this->_encrypt('nate'),

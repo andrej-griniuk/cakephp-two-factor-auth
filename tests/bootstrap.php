@@ -38,7 +38,7 @@ Cake\Core\Configure::write('App', [
     ]
 ]);
 Cake\Core\Configure::write('debug', true);
-Cake\Utility\Security::salt('justarandomsaltjustarandomsaltjustarandomsaltjustarandomsaltjustarandomsalt');
+Cake\Utility\Security::setSalt('justarandomsaltjustarandomsaltjustarandomsaltjustarandomsaltjustarandomsalt');
 
 $TMP = new \Cake\Filesystem\Folder(TMP);
 $TMP->create(TMP . 'cache/models', 0777);
@@ -65,7 +65,7 @@ $cache = [
     ]
 ];
 
-Cake\Cache\Cache::config($cache);
+Cake\Cache\Cache::setConfig($cache);
 Cake\Core\Configure::write('Session', [
     'defaults' => 'php'
 ]);
@@ -77,7 +77,7 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-Cake\Datasource\ConnectionManager::config('test', [
+Cake\Datasource\ConnectionManager::setConfig('test', [
     'url' => getenv('db_dsn'),
     'timezone' => 'UTC'
 ]);

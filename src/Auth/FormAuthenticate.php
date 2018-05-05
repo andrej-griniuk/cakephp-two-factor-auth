@@ -48,7 +48,7 @@ class FormAuthenticate extends BaseAuthenticate
         $credentials = [];
         foreach (['username', 'password'] as $field) {
             if (!$credentials[$field] = $request->getData($this->_config['fields'][$field])) {
-                $credentials[$field] = $this->_decrypt($request->session()->read('TwoFactorAuth.credentials.' . $field));
+                $credentials[$field] = $this->_decrypt($request->getSession()->read('TwoFactorAuth.credentials.' . $field));
             }
 
             if (empty($credentials[$field]) || !is_string($credentials[$field])) {
@@ -126,7 +126,7 @@ class FormAuthenticate extends BaseAuthenticate
 
         $secretField = $this->getConfig('fields.secret');
         if ($secret = Hash::get($user, $secretField)) {
-            $request->session()->write('TwoFactorAuth.credentials', $credentials);
+            $request->getSession()->write('TwoFactorAuth.credentials', $credentials);
             if (!$this->_verifyCode($secret, $request->getData('code'), $response)) {
                 return false;
             }
@@ -135,7 +135,7 @@ class FormAuthenticate extends BaseAuthenticate
                 $this->_setRememberedSecret($secret);
             }
 
-            $request->session()->delete('TwoFactorAuth.credentials');
+            $request->getSession()->delete('TwoFactorAuth.credentials');
         }
 
         unset($user[$secretField]);
@@ -182,7 +182,7 @@ class FormAuthenticate extends BaseAuthenticate
      */
     protected function _encryptionKey()
     {
-        return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::salt();
+        return Configure::read('TwoFactorAuth.encryptionKey') ?: Security::getSalt();
     }
 
     /**
