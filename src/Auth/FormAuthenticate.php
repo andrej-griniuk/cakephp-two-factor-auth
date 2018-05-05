@@ -33,6 +33,11 @@ class FormAuthenticate extends BaseAuthenticate
             'httpOnly' => true,
             'expires' => '+30 days'
         ];
+        $this->_defaultConfig['verifyAction'] = [
+            'prefix' => null,
+            'controller' => 'Users',
+            'action' => 'verify',
+        ];
 
         parent::__construct($registry, $config);
     }
@@ -81,7 +86,7 @@ class FormAuthenticate extends BaseAuthenticate
             return true;
         }
 
-        $verifyAction = Router::url($Auth->getConfig('verifyAction'), true);
+        $verifyAction = Router::url($this->getConfig('verifyAction'), true);
 
         if ($code === null) {
             $this->_registry->getController()->setResponse($response->withLocation($verifyAction));

@@ -190,11 +190,9 @@ class FormAuthenticateTest extends TestCase
             ->withData('password', 'password');
         $this->response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['withLocation'])->getMock();
 
-        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
-
         $this->response->expects($this->once())
             ->method('withLocation')
-            ->with('/testVerifyAction')
+            ->with('/Users/verify')
             ->will($this->returnSelf());
 
         $this->assertFalse($this->auth->authenticate($this->request, $this->response));
@@ -219,11 +217,9 @@ class FormAuthenticateTest extends TestCase
         ]);
         $this->response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['withLocation'])->getMock();
 
-        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
-
         $this->response->expects($this->once())
             ->method('withLocation')
-            ->with('/testVerifyAction')
+            ->with('/Users/verify')
             ->will($this->returnSelf());
 
         $this->assertFalse($this->auth->authenticate($this->request, $this->response));
@@ -251,11 +247,9 @@ class FormAuthenticateTest extends TestCase
         ]);
         $this->response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['withLocation'])->getMock();
 
-        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
-
         $this->response->expects($this->once())
             ->method('withLocation')
-            ->with('/testVerifyAction')
+            ->with('/Users/verify')
             ->will($this->returnSelf());
 
         $this->assertFalse($this->auth->authenticate($this->request, $this->response));
@@ -282,11 +276,7 @@ class FormAuthenticateTest extends TestCase
         ]);
         $this->response = $this->getMockBuilder('Cake\Http\Response')->setMethods(['withLocation'])->getMock();
 
-        $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
-
-        $this->response->expects($this->never())
-            ->method('withLocation')
-            ->will($this->returnValue(true));
+        $this->response->expects($this->never())->method('withLocation');
 
         $expected = [
             'id' => 2,
@@ -650,9 +640,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
 
-        $this->response->expects($this->never())
-            ->method('withLocation')
-            ->will($this->returnValue(true));
+        $this->response->expects($this->never())->method('withLocation');
 
         $this->auth->setConfig('remember', true);
         $this->auth->authenticate($this->request, $this->response);
@@ -684,9 +672,7 @@ class FormAuthenticateTest extends TestCase
 
         $this->Controller->Auth->setConfig('verifyAction', 'testVerifyAction');
 
-        $this->response->expects($this->never())
-            ->method('withLocation')
-            ->will($this->returnValue(true));
+        $this->response->expects($this->never())->method('withLocation');
 
         $this->auth->setConfig('remember', true);
         $this->auth->authenticate($this->request, $this->response);
