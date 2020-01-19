@@ -17,7 +17,6 @@ class TwoFactorAuthHelper extends Helper
      */
     protected $_defaultConfig = [];
 
-
     /**
      * Get RobThree\Auth\TwoFactorAuth object
      *
@@ -39,9 +38,9 @@ class TwoFactorAuthHelper extends Helper
     /**
      * Get data-uri of QRCode
      *
-     * @param string $label
-     * @param string $secret
-     * @param int $size
+     * @param string $label Label
+     * @param string $secret Secret
+     * @param int $size Size
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
@@ -53,8 +52,8 @@ class TwoFactorAuthHelper extends Helper
     /**
      * Builds a string to be encoded in a QR code
      *
-     * @param string $label
-     * @param string $secret
+     * @param string $label Label
+     * @param string $secret Secret
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
     public function getQRText($label, $secret)

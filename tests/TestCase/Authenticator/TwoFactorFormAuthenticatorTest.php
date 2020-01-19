@@ -5,12 +5,12 @@ namespace TwoFactorAuth\Test\TestCase\Authenticator;
 
 use Authentication\Authenticator\Result;
 use Authentication\Identifier\IdentifierCollection;
-use Cake\ORM\TableRegistry;
-use Cake\TestSuite\TestCase;
-use TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 use RuntimeException;
+use TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator;
 
 class TwoFactorFormAuthenticatorTest extends TestCase
 {

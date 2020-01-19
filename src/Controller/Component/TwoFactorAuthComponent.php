@@ -16,6 +16,7 @@ class TwoFactorAuthComponent extends Component
      * @var array
      */
     protected $_defaultConfig = [];
+
     /**
      * Verify one-time code
      *
@@ -32,8 +33,8 @@ class TwoFactorAuthComponent extends Component
     /**
      * Create 2FA secret
      *
-     * @param int $bits
-     * @param bool $requireCryptoSecure
+     * @param int $bits Number of bits
+     * @param bool $requireCryptoSecure Require crypto secure
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
      */

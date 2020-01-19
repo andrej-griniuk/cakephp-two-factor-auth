@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace TwoFactorAuth\Authenticator;
 
 use ArrayAccess;
@@ -20,7 +22,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     use UrlCheckerTrait;
 
     /**
-     * @var TwoFactorAuth
+     * @var \RobThree\Auth\TwoFactorAuth
      */
     protected $_tfa;
 
@@ -86,9 +88,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * 2nd factor authentication
      *
-     * @param ServerRequestInterface $request
-     * @param string $code
-     * @return ResultInterface
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request object
+     * @param string $code One-time code
+     * @return \Authentication\Authenticator\ResultInterface
      */
     protected function authenticateCode(ServerRequestInterface $request, $code): ResultInterface
     {
@@ -110,8 +112,8 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * 1st factor authentication
      *
-     * @param ServerRequestInterface $request
-     * @return ResultInterface
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request object
+     * @return \Authentication\Authenticator\ResultInterface
      */
     protected function authenticateCredentials(ServerRequestInterface $request): ResultInterface
     {
@@ -133,14 +135,13 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Verify 2FA code
      *
-     * @param string $secret
-     * @param string $code
+     * @param string $secret Secret
+     * @param string $code One-time code
      * @return bool
      */
     protected function _verifyCode($secret, $code): bool
     {
         try {
-            //return true;
             return $this->getTfa()->verifyCode($secret, $code);
         } catch (\Exception $e) {
             return false;
@@ -150,7 +151,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Get pre-authenticated user from the session
      *
-     * @param ServerRequestInterface $request
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request object
      * @return array|null
      */
     protected function _getSessionUser(ServerRequestInterface $request)
@@ -164,8 +165,8 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Store pre-authenticated user in the session
      *
-     * @param ServerRequestInterface $request
-     * @param ArrayAccess $user
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request object
+     * @param \ArrayAccess $user User
      */
     protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user)
     {
@@ -177,7 +178,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Clear pre-authenticated user from the session
      *
-     * @param ServerRequestInterface $request
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request object
      */
     protected function _unsetSessionUser(ServerRequestInterface $request)
     {
@@ -190,7 +191,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Get users's 2FA secret
      *
-     * @param array $user
+     * @param array $user User
      * @return string|null
      */
     protected function _getUserSecret($user)
