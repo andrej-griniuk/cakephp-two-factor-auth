@@ -94,7 +94,8 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function authenticateCode(ServerRequestInterface $request, $code): ResultInterface
     {
-        if (!$user = $this->_getSessionUser($request)) {
+        $user = $this->_getSessionUser($request);
+        if (!$user) {
             // User hasn't passed 1st factor auth
             return new Result(null, Result::FAILURE_CREDENTIALS_MISSING);
         }
