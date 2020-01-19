@@ -31,7 +31,7 @@ before_script:
 
 script:
   - if [[ COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=coverage.xml || true ; fi
-  - if [[ COVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/b ; fi
+  - if [[ COVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/bash) ; fi
 
   - if [[ DEFAULT == 1 ]]; then vendor/bin/phpunit --stderr ; fi
 
