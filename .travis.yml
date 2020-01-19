@@ -30,9 +30,8 @@ before_script:
   - command -v phpenv > /dev/null && phpenv rehash || true
 
 script:
-  - if [[ COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=clover.xml || true ; fi
-  - if [[ COVERAGE == 1 ]]; then wget -O codecov.sh https://codecov.io/bash ; fi
-  - if [[ COVERAGE == 1 ]]; then bash codecov.sh ; fi
+  - if [[ COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=coverage.xml || true ; fi
+  - if [[ COVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/b ; fi
 
   - if [[ DEFAULT == 1 ]]; then vendor/bin/phpunit --stderr ; fi
 
