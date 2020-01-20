@@ -602,7 +602,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
             [],
-            ['code' => 123]
+            ['code' => 123456]
         );
 
         $form = new TwoFactorFormAuthenticator($identifiers);
