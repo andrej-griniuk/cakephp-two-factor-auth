@@ -26,8 +26,7 @@ matrix:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
-  - if [[ PHPCS == 1 ]]; then composer require --dev cakephp/cakephp-codesniffer ; fi
-  - command -v phpenv > /dev/null && phpenv rehash || true
+  - if [[ $PHPCS == 1 ]]; then composer require --dev cakephp/cakephp-codesniffer ; fi
 
 script:
   - if [[ $COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=coverage.xml || true ; fi
