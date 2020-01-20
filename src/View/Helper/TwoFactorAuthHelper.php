@@ -48,16 +48,4 @@ class TwoFactorAuthHelper extends Helper
     {
         return $this->getTfa()->getQRCodeImageAsDataUri($label, $secret, $size);
     }
-
-    /**
-     * Builds a string to be encoded in a QR code
-     *
-     * @param string $label Label
-     * @param string $secret Secret
-     * @throws \RobThree\Auth\TwoFactorAuthException
-     */
-    public function getQRText($label, $secret)
-    {
-        $this->getTfa()->getQRText($label, $secret);
-    }
 }

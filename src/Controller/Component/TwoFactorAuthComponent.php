@@ -48,7 +48,6 @@ class TwoFactorAuthComponent extends Component
      *
      * @return \RobThree\Auth\TwoFactorAuth
      * @throws \RobThree\Auth\TwoFactorAuthException
-     * @throws \Exception
      */
     public function getTfa()
     {
