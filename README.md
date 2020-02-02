@@ -1,5 +1,5 @@
 [![Build Status](https://img.shields.io/travis/andrej-griniuk/cakephp-two-factor-auth/master.svg?style=flat-square)](https://travis-ci.org/andrej-griniuk/cakephp-two-factor-auth)
-[![Coverage Status](https://img.shields.io/coveralls/andrej-griniuk/cakephp-two-factor-auth.svg?style=flat-square)](https://coveralls.io/r/andrej-griniuk/cakephp-two-factor-auth?branch=master)
+[![codecov](https://codecov.io/gh/andrej-griniuk/cakephp-two-factor-auth/branch/master/graph/badge.svg)](https://codecov.io/gh/andrej-griniuk/cakephp-two-factor-auth)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
 # TwoFactorAuth plugin for CakePHP
@@ -10,7 +10,7 @@ Basically, it works similar way CakePHP `FormAuthenticate` does. After submittin
 
 ## Requirements
 
-- CakePHP 3.6+ (use ***^1.2*** version for CakePHP <3.6)
+- CakePHP 4.0+ (use ***^1.3*** version for CakePHP <3.6+)
 
 ## Installation
 
@@ -27,63 +27,165 @@ First of all you need to add `secret` field to your users table (field name can 
 ALTER TABLE `users` ADD `secret` VARCHAR(255) NULL;
 ```
 
-Second, you need to load the plugin in your bootstrap.php
+Second, you need to load the plugin in your Application.php
 
 ```php
-Plugin::load('TwoFactorAuth', ['bootstrap' => true, 'routes' => true]);
+$this->addPlugin('TwoFactorAuth');
 ```
 
-You can see the default config values [here](https://github.com/andrej-griniuk/cakephp-two-factor-auth/blob/master/config/two_factor_auth.php) and find out what do they mean [here](https://github.com/RobThree/TwoFactorAuth#usage). To overwrite them, create two_factor_auth.php file in your `config` directory.
+Alternatively, execute the following line:
 
-Then you need to set up authentication in your controller as you would normally do, but using `TwoFactorAuth.Auth` component and `TwoFactorAuth.Form` authenticator, e.g.:
+```bash
+bin/cake plugin load TwoFactorAuth
+```
+
+You can see the default config values [here](https://github.com/andrej-griniuk/cakephp-two-factor-auth/blob/master/src/Authenticator/TwoFactorFormAuthenticator.php) and find out what do they mean [here](https://github.com/RobThree/TwoFactorAuth#usage). To overwrite them, pass them as `TwoFactorForm` authenticator values.
+
+Then you need to set up authentication in your Application.php as you would [normally do it](https://book.cakephp.org/authentication/2/en/index.html#getting-started), but using `TwoFactorForm` authenticator instead of `Form`, e.g.:
 
 ```php
-class AppController extends Controller
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
-    public function initialize()
+    public function bootstrap(): void
     {
-        parent::initialize();
+        // Call parent to load bootstrap from files.
+        parent::bootstrap();
 
-        $this->loadComponent('Flash');
-        $this->loadComponent('Security');
-        $this->loadComponent('Csrf');
-        $this->loadComponent('TwoFactorAuth.Auth', [
-            'authenticate' => [
-                'TwoFactorAuth.Form' => [
-                    'fields' => [
-                        'username' => 'username',
-                        'password' => 'password',
-                        'secret' => 'secret', // database field
-                        'remember' => 'remember' // checkbox form field name for "Trust this device" feature
-                    ],
-                    'remember' => true, // enable "Trust this device" feature
-                    'cookie' => [ // cookie settings for "Trust this device" feature
-                        'name' => 'TwoFactorAuth',
-                        'httpOnly' => true,
-                        'expires' => '+30 days'
-                    ],
-                    'verifyAction' => [
-                        'prefix' => false,
-                        'controller' => 'TwoFactorAuth',
-                        'action' => 'verify',
-                        'plugin' => 'TwoFactorAuth'
-                    ],
-                ],
-            ],
+        $this->addPlugin('TwoFactorAuth');
+        $this->addPlugin('Authentication');
+    }
+
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+    {
+        // Various other middlewares for error handling, routing etc. added here.
+
+        // Create an authentication middleware object
+        $authentication = new AuthenticationMiddleware($this);
+
+        // Add the middleware to the middleware queue.
+        // Authentication should be added *after* RoutingMiddleware.
+        // So that subdirectory information and routes are loaded.
+        $middlewareQueue->add($authentication);
+
+        return $middlewareQueue;
+    }
+
+    public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
+    {
+        $service = new AuthenticationService();
+        $service->setConfig([
+            'unauthenticatedRedirect' => '/users/login',
+            'queryParam' => 'redirect',
         ]);
+
+        $fields = [
+            'username' => 'username',
+            'password' => 'password'
+        ];
+
+        // Load the authenticators, you want session first
+        $service->loadAuthenticator('Authentication.Session');
+        $service->loadAuthenticator('TwoFactorAuth.TwoFactorForm', [
+            'fields' => $fields,
+            'loginUrl' => '/users/login'
+        ]);
+
+        // Load identifiers
+        $service->loadIdentifier('Authentication.Password', compact('fields'));
+
+        return $service;
     }
 }
 ```
 
-Basically, it works same way CakePHP `Form` authenticator does.
-After entering correct username/password combination, if the user has `secret` field (can be overwritten via `TwoFactorAuth.Form` configuration) set he will be redirected to `verifyAction` (by default `['controller' => 'TwoFactorAuth', 'action' => 'verify', 'plugin' => 'TwoFactorAuth', 'prefix' => false]`) where he is asked to enter a one-time code.
-There is no logic behind the action, it only renders the form that has to be submitted to the `loginAction` again with `code` field set.
-You can override the view using standard CakePHP conventions to [override Plugin views](http://book.cakephp.org/3.0/en/plugins.html#overriding-plugin-templates-from-inside-your-application) or change the `verifyAction` in `TwoFactorAuth` configuration.
+Next, in your AppController load the `Authentication` and `TwoFactorAuth` components:
 
-You can access the [RobThree\Auth\TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth) instance from your controller via `$this->Auth->tfa`. For example, you can generate user's secret and get QR code data URI for it this way:
 ```php
-$secret = $this->Auth->tfa->createSecret();
-$secretDataUri = $this->Auth->tfa->getQRCodeImageAsDataUri('Andrej Griniuk', $secret);
+// in src/Controller/AppController.php
+public function initialize()
+{
+    parent::initialize();
+
+    $this->loadComponent('Authentication.Authentication');
+    $this->loadComponent('TwoFactorAuth.TwoFactorAuth');
+}
+```
+
+Once you have the middleware applied to your application you’ll need a way for users to login. A simplistic `UsersController` would look like:
+
+```php
+class UsersController extends AppController
+{
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->Authentication->allowUnauthenticated(['login', 'verify']);
+    }
+
+    /**
+     * Login method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function login()
+    {
+        $result = $this->Authentication->getResult();
+        if ($result->isValid()) {
+            // If the user is logged in send them away.
+            $target = $this->Authentication->getLoginRedirect() ?? '/home';
+
+            return $this->redirect($target);
+        }
+
+        if ($this->request->is('post') && !$result->isValid()) {
+            if ($result->getStatus() == \TwoFactorAuth\Authenticator\Result::TWO_FACTOR_AUTH_FAILED) {
+                $this->Flash->error('Invalid 2FA code');
+
+                return $this->redirect(['action' => 'verify']);
+            } elseif ($result->getStatus() == \TwoFactorAuth\Authenticator\Result::TWO_FACTOR_AUTH_REQUIRED) {
+                return $this->redirect(['action' => 'verify']);
+            } else {
+                $this->Flash->error('Invalid username or password');
+            }
+        }
+    }
+
+    public function logout()
+    {
+        $this->Authentication->logout();
+        return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
+    public function verify()
+    {
+        // This action is only needed to render a vew with one time code form
+    }
+}
+```
+
+And `verify.php` would look like:
+
+```html
+<div class="users form content">
+    <?= $this->Form->create(null, ['url' => '/users/login']) ?>
+    <fieldset>
+        <legend><?= __('Please enter your 2FA code') ?></legend>
+        <?= $this->Form->control('code') ?>
+    </fieldset>
+    <?= $this->Form->button(__('Continue')); ?>
+    <?= $this->Form->end() ?>
+</div>
+```
+
+Basically, it works same way CakePHP `Authentication.Form` authenticator does.
+After entering correct username/password combination, if the user has `secret` field (can be overwritten via `TwoFactorAuth.TwoFactorForm` configuration) set he will be redirected to the `verify` action where he is asked to enter a one-time code.
+There is no logic behind this action, it only renders the form that has to be submitted to the `loginAction` again with `code` field set.
+
+You can access the [RobThree\Auth\TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth) instance from your controller via `$this->TwoFactorAuth->getTfa()` or call some of the methods directly on `TwoFactorAuth` component. For example, you can generate user's secret and get QR code data URI for it this way:
+```php
+$secret = $this->TwoFactorAuth->createSecret();
+$secretDataUri = $this->TwoFactorAuth->getQRCodeImageAsDataUri('CakePHP:user@email.com', $secret);
 ```
 Then display it in your view:
 ```php
@@ -101,7 +203,7 @@ https://github.com/RobThree/TwoFactorAuth
 
 ## License
 
-Copyright (c) 2016, [Andrej Griniuk][andrej-griniuk] and licensed under [The MIT License][mit].
+Copyright (c) 2020, [Andrej Griniuk][andrej-griniuk] and licensed under [The MIT License][mit].
 
 [cakephp]:http://cakephp.org
 [composer]:http://getcomposer.org

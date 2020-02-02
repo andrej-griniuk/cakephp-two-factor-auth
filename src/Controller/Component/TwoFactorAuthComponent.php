@@ -44,6 +44,20 @@ class TwoFactorAuthComponent extends Component
     }
 
     /**
+     * Get data-uri of QRCode
+     *
+     * @param string $label Label
+     * @param string $secret Secret
+     * @param int $size Size
+     * @return string
+     * @throws \RobThree\Auth\TwoFactorAuthException
+     */
+    public function getQRCodeImageAsDataUri($label, $secret, $size = 200)
+    {
+        return $this->getTfa()->getQRCodeImageAsDataUri($label, $secret, $size);
+    }
+
+    /**
      * Get RobThree\Auth\TwoFactorAuth object
      *
      * @return \RobThree\Auth\TwoFactorAuth

@@ -103,4 +103,16 @@ class TwoFactorAuthComponentTest extends TestCase
         $code = $this->TwoFactorAuth->getTfa()->getCode($secret);
         $this->assertTrue($this->TwoFactorAuth->verifyCode($secret, $code));
     }
+
+    /**
+     * getQRCodeImageAsDataUri method test
+     *
+     * @return void
+     * @throws \RobThree\Auth\TwoFactorAuthException
+     */
+    public function testGetQRCodeImageAsDataUri(): void
+    {
+        $uri = $this->TwoFactorAuth->getQRCodeImageAsDataUri('label', $this->TwoFactorAuth->getTfa()->createSecret());
+        $this->assertNotNull($uri);
+    }
 }
