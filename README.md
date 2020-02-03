@@ -123,11 +123,6 @@ class UsersController extends AppController
         $this->Authentication->allowUnauthenticated(['login', 'verify']);
     }
 
-    /**
-     * Login method
-     *
-     * @return \Cake\Http\Response|null
-     */
     public function login()
     {
         $result = $this->Authentication->getResult();
@@ -140,10 +135,12 @@ class UsersController extends AppController
 
         if ($this->request->is('post') && !$result->isValid()) {
             if ($result->getStatus() == \TwoFactorAuth\Authenticator\Result::TWO_FACTOR_AUTH_FAILED) {
+                // One time code was entered and it's invalid
                 $this->Flash->error('Invalid 2FA code');
 
                 return $this->redirect(['action' => 'verify']);
             } elseif ($result->getStatus() == \TwoFactorAuth\Authenticator\Result::TWO_FACTOR_AUTH_REQUIRED) {
+                // One time code is required and wasn't yet entered - redirect to the verify action 
                 return $this->redirect(['action' => 'verify']);
             } else {
                 $this->Flash->error('Invalid username or password');
@@ -169,7 +166,7 @@ And `verify.php` would look like:
 
 ```html
 <div class="users form content">
-    <?= $this->Form->create(null, ['url' => '/users/login']) ?>
+    <?= $this->Form->create(null, ['url' => ['action' => 'login']) ?>
     <fieldset>
         <legend><?= __('Please enter your 2FA code') ?></legend>
         <?= $this->Form->control('code') ?>
