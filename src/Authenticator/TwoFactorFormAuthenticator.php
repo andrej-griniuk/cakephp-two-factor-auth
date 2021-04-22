@@ -54,6 +54,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         ],
         'codeField' => 'code',
         'secretProperty' => 'secret',
+		'isEnabled2faProperty' => 'secret',
         'issuer' => null,
         'digits' => 6,
         'period' => 30,
@@ -120,8 +121,8 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     {
         $result = parent::authenticate($request);
 
-        if (!$result->isValid() || !$this->_getUserSecret($result->getData())) {
-            // Invalid user or 2FA secret not set
+        if (!$result->isValid() || !$this->_getUser2faEnabledStatus($result->getData()) || !$this->_getUserSecret($result->getData())) {
+            // The user is invalid or the 2FA secret is not enabled/present
             return $result;
         }
 
@@ -199,7 +200,12 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     {
         return Hash::get($user, $this->getConfig('secretProperty'));
     }
-
+	
+	protected function _getUser2faEnabledStatus($user)
+	{
+		return Hash::get($user, $this->getConfig('isEnabled2faProperty'));
+	}
+	
     /**
      * Get RobThree\Auth\TwoFactorAuth object
      *
