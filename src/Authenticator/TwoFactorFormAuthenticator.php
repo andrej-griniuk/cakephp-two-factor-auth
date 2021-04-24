@@ -54,7 +54,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         ],
         'codeField' => 'code',
         'secretProperty' => 'secret',
-		'isEnabled2faProperty' => 'secret',
+        'isEnabled2faProperty' => 'secret',
         'issuer' => null,
         'digits' => 6,
         'period' => 30,
@@ -191,7 +191,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     }
 
     /**
-     * Get users's 2FA secret
+     * Get user's 2FA secret
      *
      * @param array $user User
      * @return string|null
@@ -200,12 +200,18 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     {
         return Hash::get($user, $this->getConfig('secretProperty'));
     }
-	
-	protected function _getUser2faEnabledStatus($user)
-	{
-		return Hash::get($user, $this->getConfig('isEnabled2faProperty'));
-	}
-	
+
+    /**
+     * Check if 2FA is enabled for the given user
+     *
+     * @param array $user User
+     * @return bool
+     */
+    protected function _getUser2faEnabledStatus($user)
+    {
+        return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty'));
+    }
+
     /**
      * Get RobThree\Auth\TwoFactorAuth object
      *
