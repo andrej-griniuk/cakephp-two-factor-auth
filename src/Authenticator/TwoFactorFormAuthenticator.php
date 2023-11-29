@@ -22,7 +22,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
 {
     use UrlCheckerTrait;
 
-    protected ?TwoFactorAuth $_tfa;
+    protected ?TwoFactorAuth $_tfa = null;
 
     /**
      * Default config for this object.
@@ -76,7 +76,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
             return $this->_buildLoginUrlErrorResult($request);
         }
 
-        $code = Hash::get($request->getParsedBody(), $this->getConfig('codeField'), '');
+        $code = Hash::get($request->getParsedBody(), $this->getConfig('codeField'));
         if (!is_null($code)) {
             return $this->authenticateCode($request, (string)$code);
         } else {
@@ -156,9 +156,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Get pre-authenticated user from the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @return array|null
+     * @return \ArrayAccess|null
      */
-    protected function _getSessionUser(ServerRequestInterface $request): ?array
+    protected function _getSessionUser(ServerRequestInterface $request): ?ArrayAccess
     {
         /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
@@ -195,10 +195,10 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Get user's 2FA secret
      *
-     * @param array $user User
+     * @param \ArrayAccess $user User
      * @return string|null
      */
-    protected function _getUserSecret(array $user): ?string
+    protected function _getUserSecret(ArrayAccess $user): ?string
     {
         return Hash::get($user, $this->getConfig('secretProperty'));
     }
@@ -206,10 +206,10 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Check if 2FA is enabled for the given user
      *
-     * @param array $user User
+     * @param array|\ArrayAccess $user User
      * @return bool
      */
-    protected function _getUser2faEnabledStatus(array $user): bool
+    protected function _getUser2faEnabledStatus(array|ArrayAccess $user): bool
     {
         return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty'));
     }

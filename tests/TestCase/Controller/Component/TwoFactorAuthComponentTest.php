@@ -49,7 +49,7 @@ class TwoFactorAuthComponentTest extends TestCase
         );
         $request = $request->withAttribute('authentication', $service);
         $response = new Response();
-        $controller = new Controller($request, $response);
+        $controller = new Controller($request, 'Users');
         $registry = new ComponentRegistry($controller);
 
         $this->TwoFactorAuth = new TwoFactorAuthComponent($registry);

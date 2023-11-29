@@ -49,6 +49,7 @@ Configure::write('App', [
         'plugins' => [ROOT . 'Plugin' . DS],
         'templates' => [ROOT . 'templates' . DS],
     ],
+    'encoding' => 'UTF-8',
 ]);
 
 if (!getenv('db_dsn')) {
