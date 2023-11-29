@@ -12,8 +12,8 @@
         }
     ],
     "require": {
-        "cakephp/cakephp": "^4.0",
-        "cakephp/authentication": "^2.0",
+        "cakephp/cakephp": "^5.0",
+        "cakephp/authentication": "^3.0",
         "robthree/twofactorauth": "^1.6"
     },
     "require-dev": {
