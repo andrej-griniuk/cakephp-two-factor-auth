@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace TwoFactorAuth\Controller\Component;
 
 use Cake\Controller\Component;
+use RobThree\Auth\TwoFactorAuth;
 
 /**
  * Authentication component
@@ -18,7 +19,7 @@ class TwoFactorAuthComponent extends Component
      * @return bool
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
-    public function verifyCode($secret, $code)
+    public function verifyCode(string $secret, string $code): bool
     {
         return $this->getTfa()->verifyCode($secret, str_replace(' ', '', $code));
     }
@@ -31,7 +32,7 @@ class TwoFactorAuthComponent extends Component
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
-    public function createSecret($bits = 80, $requireCryptoSecure = true)
+    public function createSecret(int $bits = 80, bool $requireCryptoSecure = true): string
     {
         return $this->getTfa()->createSecret($bits, $requireCryptoSecure);
     }
@@ -45,7 +46,7 @@ class TwoFactorAuthComponent extends Component
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
-    public function getQRCodeImageAsDataUri($label, $secret, $size = 200)
+    public function getQRCodeImageAsDataUri(string $label, string $secret, int $size = 200): string
     {
         return $this->getTfa()->getQRCodeImageAsDataUri($label, $secret, $size);
     }
@@ -56,7 +57,7 @@ class TwoFactorAuthComponent extends Component
      * @return \RobThree\Auth\TwoFactorAuth
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
-    public function getTfa()
+    public function getTfa(): TwoFactorAuth
     {
         /** @var \Authentication\AuthenticationService $authenticationService */
         $authenticationService = $this->getController()->getRequest()->getAttribute('authentication');

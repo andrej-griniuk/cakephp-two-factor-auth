@@ -9,6 +9,7 @@ use Authentication\Authenticator\ResultInterface;
 use Authentication\Identifier\AbstractIdentifier;
 use Authentication\UrlChecker\UrlCheckerTrait;
 use Cake\Utility\Hash;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use RobThree\Auth\TwoFactorAuth;
 
@@ -75,9 +76,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
             return $this->_buildLoginUrlErrorResult($request);
         }
 
-        $code = Hash::get($request->getParsedBody(), $this->getConfig('codeField'));
+        $code = Hash::get($request->getParsedBody(), $this->getConfig('codeField'), '');
         if (!is_null($code)) {
-            return $this->authenticateCode($request, $code);
+            return $this->authenticateCode($request, (string)$code);
         } else {
             return $this->authenticateCredentials($request);
         }
@@ -90,7 +91,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param string $code One-time code
      * @return \Authentication\Authenticator\ResultInterface
      */
-    protected function authenticateCode(ServerRequestInterface $request, $code): ResultInterface
+    protected function authenticateCode(ServerRequestInterface $request, string $code): ResultInterface
     {
         $user = $this->_getSessionUser($request);
         if (!$user) {
@@ -118,7 +119,11 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     {
         $result = parent::authenticate($request);
 
-        if (!$result->isValid() || !$this->_getUser2faEnabledStatus($result->getData()) || !$this->_getUserSecret($result->getData())) {
+        if (
+            !$result->isValid() ||
+            !$this->_getUser2faEnabledStatus($result->getData()) ||
+            !$this->_getUserSecret($result->getData())
+        ) {
             // The user is invalid or the 2FA secret is not enabled/present
             return $result;
         }
@@ -138,11 +143,11 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param string $code One-time code
      * @return bool
      */
-    protected function _verifyCode($secret, $code): bool
+    protected function _verifyCode(string $secret, string $code): bool
     {
         try {
             return $this->getTfa()->verifyCode($secret, $code);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -153,7 +158,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
      * @return array|null
      */
-    protected function _getSessionUser(ServerRequestInterface $request)
+    protected function _getSessionUser(ServerRequestInterface $request): ?array
     {
         /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
@@ -167,7 +172,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
      * @param \ArrayAccess $user User
      */
-    protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user)
+    protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user): void
     {
         /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
@@ -179,7 +184,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
      */
-    protected function _unsetSessionUser(ServerRequestInterface $request)
+    protected function _unsetSessionUser(ServerRequestInterface $request): void
     {
         /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
@@ -193,7 +198,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param array $user User
      * @return string|null
      */
-    protected function _getUserSecret($user)
+    protected function _getUserSecret(array $user): ?string
     {
         return Hash::get($user, $this->getConfig('secretProperty'));
     }
@@ -204,7 +209,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param array $user User
      * @return bool
      */
-    protected function _getUser2faEnabledStatus($user)
+    protected function _getUser2faEnabledStatus(array $user): bool
     {
         return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty'));
     }
@@ -215,7 +220,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @return \RobThree\Auth\TwoFactorAuth
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
-    public function getTfa()
+    public function getTfa(): TwoFactorAuth
     {
         if (!$this->_tfa) {
             $this->_tfa = new TwoFactorAuth(
