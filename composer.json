@@ -17,7 +17,7 @@
         "robthree/twofactorauth": "^1.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^10"
     },
     "autoload": {
         "psr-4": {

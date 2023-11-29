@@ -58,3 +58,6 @@ if (!getenv('db_dsn')) {
 Plugin::getCollection()->add(new \Authentication\Plugin());
 
 $_SERVER['PHP_SELF'] = '/';
+
+$loader = new Cake\TestSuite\Fixture\SchemaLoader();
+$loader->loadInternalFile(__DIR__ . '/schema.php');
