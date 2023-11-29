@@ -15,7 +15,7 @@ class TwoFactorAuthComponent extends Component
      * Verify one-time code
      *
      * @param string $secret users's secret
-     * @param string $code one-time code
+     * @param string $code   one-time code
      * @return bool
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
@@ -27,7 +27,7 @@ class TwoFactorAuthComponent extends Component
     /**
      * Create 2FA secret
      *
-     * @param int $bits Number of bits
+     * @param int  $bits                Number of bits
      * @param bool $requireCryptoSecure Require crypto secure
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
@@ -40,9 +40,9 @@ class TwoFactorAuthComponent extends Component
     /**
      * Get data-uri of QRCode
      *
-     * @param string $label Label
+     * @param string $label  Label
      * @param string $secret Secret
-     * @param int $size Size
+     * @param int    $size   Size
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
@@ -59,10 +59,14 @@ class TwoFactorAuthComponent extends Component
      */
     public function getTfa(): TwoFactorAuth
     {
-        /** @var \Authentication\AuthenticationService $authenticationService */
+        /**
+ * @var \Authentication\AuthenticationService $authenticationService
+*/
         $authenticationService = $this->getController()->getRequest()->getAttribute('authentication');
 
-        /** @var \TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator $twoFactorFormAuthenticator */
+        /**
+ * @var \TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator $twoFactorFormAuthenticator
+*/
         $twoFactorFormAuthenticator = $authenticationService->authenticators()->get('TwoFactorForm');
 
         return $twoFactorFormAuthenticator->getTfa();

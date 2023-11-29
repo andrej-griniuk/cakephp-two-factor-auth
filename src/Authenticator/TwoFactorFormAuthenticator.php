@@ -88,7 +88,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * 2nd factor authentication
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @param string $code One-time code
+     * @param string                                   $code    One-time code
      * @return \Authentication\Authenticator\ResultInterface
      */
     protected function authenticateCode(ServerRequestInterface $request, string $code): ResultInterface
@@ -120,9 +120,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         $result = parent::authenticate($request);
 
         if (
-            !$result->isValid() ||
-            !$this->_getUser2faEnabledStatus($result->getData()) ||
-            !$this->_getUserSecret($result->getData())
+            !$result->isValid()
+            || !$this->_getUser2faEnabledStatus($result->getData())
+            || !$this->_getUserSecret($result->getData())
         ) {
             // The user is invalid or the 2FA secret is not enabled/present
             return $result;
@@ -140,7 +140,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Verify 2FA code
      *
      * @param string $secret Secret
-     * @param string $code One-time code
+     * @param string $code   One-time code
      * @return bool
      */
     protected function _verifyCode(string $secret, string $code): bool
@@ -160,7 +160,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function _getSessionUser(ServerRequestInterface $request): ?ArrayAccess
     {
-        /** @var \Cake\Http\Session $session */
+        /**
+ * @var \Cake\Http\Session $session
+*/
         $session = $request->getAttribute('session');
 
         return $session->read($this->getConfig('userSessionKey'));
@@ -170,11 +172,13 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Store pre-authenticated user in the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @param \ArrayAccess $user User
+     * @param \ArrayAccess                             $user    User
      */
     protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user): void
     {
-        /** @var \Cake\Http\Session $session */
+        /**
+ * @var \Cake\Http\Session $session
+*/
         $session = $request->getAttribute('session');
         $session->write($this->getConfig('userSessionKey'), $user);
     }
@@ -186,7 +190,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function _unsetSessionUser(ServerRequestInterface $request): void
     {
-        /** @var \Cake\Http\Session $session */
+        /**
+ * @var \Cake\Http\Session $session
+*/
         $session = $request->getAttribute('session');
 
         $session->delete($this->getConfig('userSessionKey'));
@@ -206,7 +212,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Check if 2FA is enabled for the given user
      *
-     * @param array|\ArrayAccess $user User
+     * @param \ArrayAccess|array $user User
      * @return bool
      */
     protected function _getUser2faEnabledStatus(array|ArrayAccess $user): bool
