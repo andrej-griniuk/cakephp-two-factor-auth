@@ -11,13 +11,6 @@ use Cake\Controller\Component;
 class TwoFactorAuthComponent extends Component
 {
     /**
-     * Default configuration.
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [];
-
-    /**
      * Verify one-time code
      *
      * @param string $secret users's secret

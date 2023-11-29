@@ -6,7 +6,7 @@ namespace TwoFactorAuth\Authenticator;
 use ArrayAccess;
 use Authentication\Authenticator\FormAuthenticator as CakeFormAuthenticator;
 use Authentication\Authenticator\ResultInterface;
-use Authentication\Identifier\IdentifierInterface;
+use Authentication\Identifier\AbstractIdentifier;
 use Authentication\UrlChecker\UrlCheckerTrait;
 use Cake\Utility\Hash;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,10 +21,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
 {
     use UrlCheckerTrait;
 
-    /**
-     * @var \RobThree\Auth\TwoFactorAuth
-     */
-    protected $_tfa;
+    protected ?TwoFactorAuth $_tfa;
 
     /**
      * Default config for this object.
@@ -44,13 +41,13 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      *
      * @var array
      */
-    protected $_defaultConfig = [
+    protected array $_defaultConfig = [
         'loginUrl' => null,
         'userSessionKey' => 'TwoFactorAuth.user',
         'urlChecker' => 'Authentication.Default',
         'fields' => [
-            IdentifierInterface::CREDENTIAL_USERNAME => 'username',
-            IdentifierInterface::CREDENTIAL_PASSWORD => 'password',
+            AbstractIdentifier::CREDENTIAL_USERNAME => 'username',
+            AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
         ],
         'codeField' => 'code',
         'secretProperty' => 'secret',
