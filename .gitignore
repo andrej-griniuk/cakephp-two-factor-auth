@@ -6,4 +6,6 @@ config/Migrations/schema-dump-default.lock
 build/
 tmp/
 .idea/
+nbproject
+.phpunit.cache
 .phpunit.result.cache
