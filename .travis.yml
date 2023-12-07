@@ -34,7 +34,7 @@ before_script:
   - if [[ $PHPCS == 1 ]]; then composer require --dev cakephp/cakephp-codesniffer:^5.0 ; fi
 
 script:
-  - if [[ $COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=coverage.xml || true ; fi
+  - if [[ $COVERAGE == 1 ]]; then export XDEBUG_MODE=coverage && vendor/bin/phpunit --coverage-clover=coverage.xml ; fi
   - if [[ $COVERAGE == 1 ]]; then curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov -v -f coverage.xml ; fi
 
   - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit --stderr ; fi
