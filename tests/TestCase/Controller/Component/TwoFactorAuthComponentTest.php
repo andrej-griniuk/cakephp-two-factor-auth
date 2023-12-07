@@ -6,9 +6,9 @@ namespace TwoFactorAuth\Test\TestCase\Controller\Component;
 use Authentication\AuthenticationService;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
+use RobThree\Auth\TwoFactorAuth;
 use TwoFactorAuth\Controller\Component\TwoFactorAuthComponent;
 
 /**
@@ -32,7 +32,8 @@ class TwoFactorAuthComponentTest extends TestCase
     {
         parent::setUp();
 
-        $service = new AuthenticationService([
+        $service = new AuthenticationService(
+            [
             'identifiers' => [
                 'Authentication.Password',
             ],
@@ -40,7 +41,8 @@ class TwoFactorAuthComponentTest extends TestCase
                 'Authentication.Session',
                 'TwoFactorAuth.TwoFactorForm',
             ],
-        ]);
+            ]
+        );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/'],
@@ -48,8 +50,7 @@ class TwoFactorAuthComponentTest extends TestCase
             ['username' => 'mariano', 'password' => 'password']
         );
         $request = $request->withAttribute('authentication', $service);
-        $response = new Response();
-        $controller = new Controller($request, $response);
+        $controller = new Controller($request, 'Users');
         $registry = new ComponentRegistry($controller);
 
         $this->TwoFactorAuth = new TwoFactorAuthComponent($registry);
@@ -64,7 +65,7 @@ class TwoFactorAuthComponentTest extends TestCase
     public function testGetTfa(): void
     {
         $tfa = $this->TwoFactorAuth->getTfa();
-        $this->assertInstanceOf(\RobThree\Auth\TwoFactorAuth::class, $tfa);
+        $this->assertInstanceOf(TwoFactorAuth::class, $tfa);
     }
 
     /**

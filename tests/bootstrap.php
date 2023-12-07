@@ -9,8 +9,10 @@ declare(strict_types=1);
  * installed as a dependency of an application.
  */
 
+use Authentication\Plugin as AuthPlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\TestSuite\Fixture\SchemaLoader;
 
 $findRoot = function ($root) {
     do {
@@ -38,23 +40,30 @@ require_once $root . '/vendor/autoload.php';
 require_once $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
 if (file_exists($root . '/config/bootstrap.php')) {
-    require $root . '/config/bootstrap.php';
+    include $root . '/config/bootstrap.php';
 
     return;
 }
 
-Configure::write('App', [
+Configure::write(
+    'App',
+    [
     'namespace' => 'TwoFactorAuth',
     'paths' => [
         'plugins' => [ROOT . 'Plugin' . DS],
         'templates' => [ROOT . 'templates' . DS],
     ],
-]);
+    'encoding' => 'UTF-8',
+    ]
+);
 
 if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-Plugin::getCollection()->add(new \Authentication\Plugin());
+Plugin::getCollection()->add(new AuthPlugin());
 
 $_SERVER['PHP_SELF'] = '/';
+
+$loader = new SchemaLoader();
+$loader->loadInternalFile(__DIR__ . '/schema.php');
