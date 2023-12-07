@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/andrej-griniuk/cakephp-two-factor-auth/master.svg?style=flat-square)](https://travis-ci.org/andrej-griniuk/cakephp-two-factor-auth)
+[![Build Status](https://app.travis-ci.com/andrej-griniuk/cakephp-two-factor-auth.svg?branch=master)](https://travis-ci.org/andrej-griniuk/cakephp-two-factor-auth)
 [![codecov](https://codecov.io/gh/andrej-griniuk/cakephp-two-factor-auth/branch/master/graph/badge.svg)](https://codecov.io/gh/andrej-griniuk/cakephp-two-factor-auth)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 
