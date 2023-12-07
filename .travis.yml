@@ -35,7 +35,7 @@ before_script:
 
 script:
   - if [[ $COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=coverage.xml || true ; fi
-  - if [[ $COVERAGE == 1 ]]; then curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov -v ; fi
+  - if [[ $COVERAGE == 1 ]]; then curl -Os https://uploader.codecov.io/latest/linux/codecov && chmod +x codecov && ./codecov -v -f coverage.xml ; fi
 
   - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit --stderr ; fi
 
