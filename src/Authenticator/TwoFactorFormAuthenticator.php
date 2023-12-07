@@ -11,6 +11,7 @@ use Authentication\UrlChecker\UrlCheckerTrait;
 use Cake\Utility\Hash;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use RobThree\Auth\Algorithm;
 use RobThree\Auth\TwoFactorAuth;
 
 /**
@@ -56,7 +57,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         'issuer' => null,
         'digits' => 6,
         'period' => 30,
-        'algorithm' => 'sha1',
+        'algorithm' => Algorithm::Sha1,
         'qrcodeprovider' => null,
         'rngprovider' => null,
         'timeprovider' => null,
@@ -160,9 +161,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function _getSessionUser(ServerRequestInterface $request): ?ArrayAccess
     {
-        /**
- * @var \Cake\Http\Session $session
-*/
+        /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
 
         return $session->read($this->getConfig('userSessionKey'));
@@ -176,9 +175,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user): void
     {
-        /**
- * @var \Cake\Http\Session $session
-*/
+        /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
         $session->write($this->getConfig('userSessionKey'), $user);
     }
@@ -190,9 +187,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function _unsetSessionUser(ServerRequestInterface $request): void
     {
-        /**
- * @var \Cake\Http\Session $session
-*/
+        /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
 
         $session->delete($this->getConfig('userSessionKey'));

@@ -59,14 +59,10 @@ class TwoFactorAuthComponent extends Component
      */
     public function getTfa(): TwoFactorAuth
     {
-        /**
- * @var \Authentication\AuthenticationService $authenticationService
-*/
+        /** @var \Authentication\AuthenticationService $authenticationService */
         $authenticationService = $this->getController()->getRequest()->getAttribute('authentication');
 
-        /**
- * @var \TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator $twoFactorFormAuthenticator
-*/
+        /** @var \TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator $twoFactorFormAuthenticator */
         $twoFactorFormAuthenticator = $authenticationService->authenticators()->get('TwoFactorForm');
 
         return $twoFactorFormAuthenticator->getTfa();

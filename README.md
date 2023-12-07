@@ -10,7 +10,7 @@ Basically, it works similar way CakePHP `FormAuthenticate` does. After submittin
 
 ## Requirements
 
-- CakePHP 4.0+ (use ***^1.3*** version for CakePHP <3.7, ***^2.0*** version for CakePHP <4.0)
+- CakePHP 5.0+ (use ***^1.3*** version for CakePHP <3.7, ***^2.0*** version for CakePHP 3.x, ***^2.0*** version for CakePHP 4.x)
 
 ## Installation
 

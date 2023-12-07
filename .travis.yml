@@ -7,7 +7,9 @@ addons:
       - "libonig5"
 
 php:
+  - 8.1
   - 8.2
+  - 8.3
 
 sudo: false
 
@@ -30,7 +32,7 @@ matrix:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
-  - if [[ $PHPCS == 1 ]]; then composer require --dev cakephp/cakephp-codesniffer ; fi
+  - if [[ $PHPCS == 1 ]]; then composer require --dev cakephp/cakephp-codesniffer:^5.0 ; fi
 
 script:
   - if [[ $COVERAGE == 1 ]]; then vendor/bin/phpunit --coverage-clover=coverage.xml || true ; fi
@@ -38,7 +40,7 @@ script:
 
   - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit --stderr ; fi
 
-  - if [[ $PHPCS == 1 ]]; then vendor/bin/phpcs -n -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP --ignore=vendor --ignore=docs --ignore=tests/bootstrap.php . ; fi
+  - if [[ $PHPCS == 1 ]]; then vendor/bin/phpcs -n -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP --ignore=vendor --ignore=tests/bootstrap.php . ; fi
 
 notifications:
   email: false
