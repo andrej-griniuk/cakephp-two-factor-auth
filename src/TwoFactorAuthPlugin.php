@@ -8,6 +8,6 @@ use Cake\Core\BasePlugin;
 /**
  * Plugin for TwoFactorAuth
  */
-class Plugin extends BasePlugin
+class TwoFactorAuthPlugin extends BasePlugin
 {
 }
