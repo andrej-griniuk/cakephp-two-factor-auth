@@ -54,7 +54,6 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         ],
         'codeField' => 'code',
         'secretProperty' => 'secret',
-        'isEnabled2faProperty' => 'secret',
         'issuer' => null,
         'digits' => 6,
         'period' => 30,
@@ -209,7 +208,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      */
     protected function _getUser2faEnabledStatus($user)
     {
-        return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty'));
+        return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty', $this->getConfig('secretProperty')));
     }
 
     /**
