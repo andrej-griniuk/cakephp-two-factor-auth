@@ -227,10 +227,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             [],
             ['username' => 'mariano', 'password' => 'password']
         );
-        $uri = $request->getUri();
-        $uri->base = '/base';
-        $request = $request->withUri($uri);
-        $request = $request->withAttribute('base', $uri->base);
+        $request = $request->withAttribute('base', '/base');
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
@@ -333,10 +330,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             [],
             ['username' => 'mariano', 'password' => 'password']
         );
-        $uri = $request->getUri();
-        $uri->base = '/base';
-        $request = $request->withUri($uri);
-        $request = $request->withAttribute('base', $uri->base);
+        $request = $request->withAttribute('base', '/base');
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
