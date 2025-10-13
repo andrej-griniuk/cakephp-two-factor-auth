@@ -119,21 +119,20 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     {
         $result = parent::authenticate($request);
 
+        $user = $result->getData();
         if (
             !$result->isValid()
-            || !$this->_getUser2faEnabledStatus($result->getData())
-            || !$this->_getUserSecret($result->getData())
+            || !$this->_getUser2faEnabledStatus($user)
+            || !$this->_getUserSecret($user)
         ) {
             // The user is invalid or the 2FA secret is not enabled/present
             return $result;
         }
 
-        $user = $result->getData();
-
         // Store user authenticated with 1 factor
         $this->_setSessionUser($request, $user);
 
-        return new Result(null, Result::TWO_FACTOR_AUTH_REQUIRED);
+        return new Result($user, Result::TWO_FACTOR_AUTH_REQUIRED);
     }
 
     /**
