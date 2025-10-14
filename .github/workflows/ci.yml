@@ -49,17 +49,14 @@ jobs:
     runs-on: windows-2022
     name: Windows - PHP 8.4
 
-    env:
-      EXTENSIONS: mbstring, intl
-      PHP_VERSION: '8.4'
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ env.PHP_VERSION }}
+          php-version: '8.1'
+          extensions: intl, mbstring, pdo_sqlite
           ini-values: apc.enable_cli = 1
 
       - name: Cache Composer packages
