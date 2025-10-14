@@ -32,17 +32,20 @@ class TwoFactorAuthComponentTest extends TestCase
     {
         parent::setUp();
 
-        $service = new AuthenticationService(
-            [
+        $service = new AuthenticationService();
+
+        $service->loadAuthenticator('Authentication.Session', [
+            'identify' => true,
             'identifiers' => [
                 'Authentication.Password',
             ],
-            'authenticators' => [
-                'Authentication.Session',
-                'TwoFactorAuth.TwoFactorForm',
+        ]);
+
+        $service->loadAuthenticator('TwoFactorAuth.TwoFactorForm', [
+            'identifiers' => [
+                'Authentication.Password',
             ],
-            ]
-        );
+        ]);
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/'],

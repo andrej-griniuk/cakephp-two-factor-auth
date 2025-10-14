@@ -72,26 +72,33 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
+        $fields = [
+            'username' => 'username',
+            'password' => 'password'
+        ];
+
+        // Load identifiers
+        $passwordIdentifier = [
+           'Authentication.Password' => [
+              'fields' => $fields,
+           ],
+        ];
+
         $service = new AuthenticationService();
         $service->setConfig([
             'unauthenticatedRedirect' => '/users/login',
             'queryParam' => 'redirect',
         ]);
 
-        $fields = [
-            'username' => 'username',
-            'password' => 'password'
-        ];
-
         // Load the authenticators, you want session first
-        $service->loadAuthenticator('Authentication.Session');
-        $service->loadAuthenticator('TwoFactorAuth.TwoFactorForm', [
-            'fields' => $fields,
-            'loginUrl' => '/users/login'
+        $service->loadAuthenticator('Authentication.Session', [
+           'identifier' => $passwordIdentifier,
         ]);
-
-        // Load identifiers
-        $service->loadIdentifier('Authentication.Password', compact('fields'));
+        $service->loadAuthenticator('TwoFactorAuth.TwoFactorForm', [
+           'identifier' => $passwordIdentifier,
+           'fields' => $fields,
+           'loginUrl' => '/users/login',
+        ]);
 
         return $service;
     }
@@ -140,7 +147,7 @@ class UsersController extends AppController
 
                 return $this->redirect(['action' => 'verify']);
             } elseif ($result->getStatus() == \TwoFactorAuth\Authenticator\Result::TWO_FACTOR_AUTH_REQUIRED) {
-                // One time code is required and wasn't yet entered - redirect to the verify action 
+                // One time code is required and wasn't yet entered - redirect to the verify action
                 return $this->redirect(['action' => 'verify']);
             } else {
                 $this->Flash->error('Invalid username or password');
