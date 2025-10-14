@@ -176,7 +176,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Store pre-authenticated user in the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @param \ArrayAccess<string, mixed> $user User
+     * @param \ArrayAccess<string, mixed>              $user    User
      */
     protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user): void
     {
