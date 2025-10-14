@@ -125,18 +125,16 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         $result = parent::authenticate($request);
 
         $user = $result->getData();
-        if (
-            !$result->isValid()
-            || !$this->_getUser2faEnabledStatus($user)
-            || !$this->_getUserSecret($user)
-        ) {
-            // The user is invalid or the 2FA secret is not enabled/present
+
+        // Check if user is valid and is an ArrayAccess instance
+        if (!$result->isValid() || !($user instanceof ArrayAccess)) {
             return $result;
         }
 
-        // At this point, we know $user is not null and has the required 2FA data
-        assert($user !== null);
-        assert($user instanceof ArrayAccess);
+        // Check if 2FA is enabled and secret is present
+        if (!$this->_getUser2faEnabledStatus($user) || !$this->_getUserSecret($user)) {
+            return $result;
+        }
 
         // Store user authenticated with 1 factor
         $this->_setSessionUser($request, $user);
@@ -203,30 +201,23 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Get user's 2FA secret
      *
-     * @param \ArrayAccess<string, mixed>|array<string, mixed>|null $user User
+     * @param \ArrayAccess<string, mixed> $user User
      * @return string|null
      */
-    protected function _getUserSecret(ArrayAccess|array|null $user): ?string
+    protected function _getUserSecret(ArrayAccess $user): ?string
     {
-        if ($user === null) {
-            return null;
-        }
-
         return Hash::get($user, $this->getConfig('secretProperty'));
     }
 
     /**
      * Check if 2FA is enabled for the given user
      *
-     * @param \ArrayAccess<string, mixed>|array<string, mixed>|null $user User
+     * @param \ArrayAccess<string, mixed>|array<string, mixed> $user User
      * @return bool
      */
-    protected function _getUser2faEnabledStatus(ArrayAccess|array|null $user): bool
-    {
-        if ($user === null) {
-            return false;
-        }
 
+    protected function _getUser2faEnabledStatus(array|ArrayAccess $user): bool
+    {
         return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty', $this->getConfig('secretProperty')));
     }
 
