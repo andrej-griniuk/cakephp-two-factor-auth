@@ -136,6 +136,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
 
         // At this point, we know $user is not null and has the required 2FA data
         assert($user !== null);
+        assert($user instanceof ArrayAccess);
 
         // Store user authenticated with 1 factor
         $this->_setSessionUser($request, $user);
@@ -163,9 +164,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Get pre-authenticated user from the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @return \ArrayAccess<string, mixed>|array<string, mixed>|null
+     * @return \ArrayAccess<string, mixed>|null
      */
-    protected function _getSessionUser(ServerRequestInterface $request): ArrayAccess|array|null
+    protected function _getSessionUser(ServerRequestInterface $request): ?ArrayAccess
     {
         /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
@@ -177,9 +178,9 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Store pre-authenticated user in the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @param \ArrayAccess<string, mixed>|array<string, mixed>  $user User
+     * @param \ArrayAccess<string, mixed> $user User
      */
-    protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess|array $user): void
+    protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user): void
     {
         /** @var \Cake\Http\Session $session */
         $session = $request->getAttribute('session');
