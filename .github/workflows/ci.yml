@@ -45,6 +45,25 @@ jobs:
             vendor/bin/phpunit --display-deprecations --display-warnings
           fi
 
+  cs-stan:
+    name: Coding Standard & Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Composer install
+        uses: ramsey/composer-install@v3
+
+      - name: Run phpstan
+        run: vendor/bin/phpstan analyse --error-format=github
+
   testsuite-windows:
     runs-on: windows-2022
     name: Windows - PHP 8.4

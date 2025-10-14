@@ -18,6 +18,7 @@
         "robthree/twofactorauth": "^2.1"
     },
     "require-dev": {
+        "cakedc/cakephp-phpstan": "^4.0",
         "phpunit/phpunit": "^10"
     },
     "autoload": {
