@@ -215,7 +215,6 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * @param \ArrayAccess<string, mixed>|array<string, mixed> $user User
      * @return bool
      */
-
     protected function _getUser2faEnabledStatus(array|ArrayAccess $user): bool
     {
         return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty', $this->getConfig('secretProperty')));
@@ -237,7 +236,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
                 $this->getConfig('algorithm'),
                 $this->getConfig('qrcodeprovider'),
                 $this->getConfig('rngprovider'),
-                $this->getConfig('timeprovider')
+                $this->getConfig('timeprovider'),
             );
         }
 

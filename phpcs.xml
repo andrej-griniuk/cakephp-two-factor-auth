@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ruleset name="TwoFactorAuth">
+    <arg value="p"/>
+    <arg name="colors"/>
+
+    <file>.</file>
+
+    <!-- Use CakePHP coding standards -->
+    <rule ref="CakePHP"/>
+
+    <exclude-pattern>/vendor</exclude-pattern>
+</ruleset>

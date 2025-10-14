@@ -5,7 +5,6 @@ namespace TwoFactorAuth\Test\TestCase\Authenticator;
 
 use Authentication\Authenticator\Result;
 use Authentication\Identifier\IdentifierCollection;
-use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -49,7 +48,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             'Users',
             [
                 'className' => 'TestApp\Model\Table\UsersTable',
-            ]
+            ],
         );
 
         $password = password_hash('password', PASSWORD_DEFAULT);
@@ -65,14 +64,14 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator($identifiers);
@@ -91,14 +90,14 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
             [],
-            []
+            [],
         );
 
         $form = new TwoFactorFormAuthenticator($identifiers);
@@ -119,14 +118,14 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
             [],
-            ['username' => '', 'password' => '']
+            ['username' => '', 'password' => ''],
         );
 
         $form = new TwoFactorFormAuthenticator($identifiers);
@@ -147,21 +146,21 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/users/login',
-            ]
+                'loginUrl' => '/users/login',
+            ],
         );
 
         $result = $form->authenticate($request);
@@ -180,24 +179,24 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => [
-                '/en/users/login',
-                '/de/users/login',
+                'loginUrl' => [
+                    '/en/users/login',
+                    '/de/users/login',
+                ],
             ],
-            ]
         );
 
         $result = $form->authenticate($request);
@@ -216,22 +215,22 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
         $request = $request->withAttribute('base', '/base');
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/users/login',
-            ]
+                'loginUrl' => '/users/login',
+            ],
         );
 
         $result = $form->authenticate($request);
@@ -250,21 +249,21 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/Users/login'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/Users/login',
-            ]
+                'loginUrl' => '/Users/login',
+            ],
         );
 
         $result = $form->authenticate($request);
@@ -283,24 +282,24 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/de/users/login'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => [
-                '/en/users/login',
-                '/de/users/login',
+                'loginUrl' => [
+                    '/en/users/login',
+                    '/de/users/login',
+                ],
             ],
-            ]
         );
 
         $result = $form->authenticate($request);
@@ -319,22 +318,22 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
         $request = $request->withAttribute('base', '/base');
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/base/users/login',
-            ]
+                'loginUrl' => '/base/users/login',
+            ],
         );
 
         $result = $form->authenticate($request);
@@ -353,24 +352,24 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/de/users/login'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '%^/[a-z]{2}/users/login/?$%',
-            'urlChecker' => [
-                'useRegex' => true,
+                'loginUrl' => '%^/[a-z]{2}/users/login/?$%',
+                'urlChecker' => [
+                    'useRegex' => true,
+                ],
             ],
-            ]
         );
 
         $result = $form->authenticate($request);
@@ -389,8 +388,8 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
@@ -398,18 +397,18 @@ class TwoFactorFormAuthenticatorTest extends TestCase
                 'REQUEST_URI' => '/de/users/login',
             ],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '%auth\.localhost/[a-z]{2}/users/login/?$%',
-            'urlChecker' => [
-                'useRegex' => true,
-                'checkFullUrl' => true,
+                'loginUrl' => '%auth\.localhost/[a-z]{2}/users/login/?$%',
+                'urlChecker' => [
+                    'useRegex' => true,
+                    'checkFullUrl' => true,
+                ],
             ],
-            ]
         );
 
         $result = $form->authenticate($request);
@@ -428,8 +427,8 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
@@ -438,18 +437,18 @@ class TwoFactorFormAuthenticatorTest extends TestCase
                 'SERVER_NAME' => 'auth.localhost',
             ],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '%auth\.localhost/[a-z]{2}/users/login/?$%',
-            'urlChecker' => [
-                'useRegex' => true,
-                'checkFullUrl' => true,
+                'loginUrl' => '%auth\.localhost/[a-z]{2}/users/login/?$%',
+                'urlChecker' => [
+                    'useRegex' => true,
+                    'checkFullUrl' => true,
+                ],
             ],
-            ]
         );
 
         $result = $form->authenticate($request);
@@ -471,33 +470,33 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
             [],
-            ['email' => 'mariano@cakephp.org', 'secret' => 'password']
+            ['email' => 'mariano@cakephp.org', 'secret' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/users/login',
-            'fields' => [
-                'username' => 'email',
-                'password' => 'secret',
+                'loginUrl' => '/users/login',
+                'fields' => [
+                    'username' => 'email',
+                    'password' => 'secret',
+                ],
             ],
-            ]
         );
 
         $identifiers->expects($this->once())
             ->method('identify')
             ->with(
                 [
-                'username' => 'mariano@cakephp.org',
-                'password' => 'password',
-                ]
+                    'username' => 'mariano@cakephp.org',
+                    'password' => 'password',
+                ],
             )
             ->willReturn(
                 [
-                'username' => 'mariano@cakephp.org',
-                'password' => 'password',
-                ]
+                    'username' => 'mariano@cakephp.org',
+                    'password' => 'password',
+                ],
             );
 
         $form->authenticate($request);
@@ -515,29 +514,29 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
             [],
-            ['id' => 1, 'username' => 'mariano', 'password' => 'password']
+            ['id' => 1, 'username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/users/login',
-            ]
+                'loginUrl' => '/users/login',
+            ],
         );
 
         $identifiers->expects($this->once())
             ->method('identify')
             ->with(
                 [
-                'username' => 'mariano',
-                'password' => 'password',
-                ]
+                    'username' => 'mariano',
+                    'password' => 'password',
+                ],
             )
             ->willReturn(
                 [
-                'username' => 'mariano',
-                'password' => 'password',
-                ]
+                    'username' => 'mariano',
+                    'password' => 'password',
+                ],
             );
 
         $form->authenticate($request);
@@ -555,15 +554,15 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
             [],
-            ['id' => 1, 'username' => 'mariano', 'password' => 'password']
+            ['id' => 1, 'username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/users/login',
-            'urlChecker' => 'Foo',
-            ]
+                'loginUrl' => '/users/login',
+                'urlChecker' => 'Foo',
+            ],
         );
 
         $this->expectException(RuntimeException::class);
@@ -584,21 +583,21 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
             [],
-            ['id' => 1, 'username' => 'mariano', 'password' => 'password']
+            ['id' => 1, 'username' => 'mariano', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
-            'loginUrl' => '/users/login',
-            'urlChecker' => self::class,
-            ]
+                'loginUrl' => '/users/login',
+                'urlChecker' => self::class,
+            ],
         );
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'The provided URL checker class `TwoFactorAuth\Test\TestCase\Authenticator\TwoFactorFormAuthenticatorTest` ' .
-            'does not implement the `Authentication\UrlChecker\UrlCheckerInterface` interface.'
+            'does not implement the `Authentication\UrlChecker\UrlCheckerInterface` interface.',
         );
 
         $form->authenticate($request);
@@ -613,14 +612,14 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
             [],
-            ['username' => 'nate', 'password' => 'password']
+            ['username' => 'nate', 'password' => 'password'],
         );
 
         $form = new TwoFactorFormAuthenticator($identifiers);
@@ -639,14 +638,14 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
             [],
-            ['code' => 123]
+            ['code' => 123],
         );
         $user = $this->Users->find()->where(['username' => 'nate'])->firstOrFail();
         $request->getAttribute('session')->write('TwoFactorAuth.user', $user);
@@ -667,14 +666,14 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
             [],
-            ['code' => 123456]
+            ['code' => 123456],
         );
 
         $form = new TwoFactorFormAuthenticator($identifiers);
@@ -694,8 +693,8 @@ class TwoFactorFormAuthenticatorTest extends TestCase
     {
         $identifiers = new IdentifierCollection(
             [
-            'Authentication.Password',
-            ]
+                'Authentication.Password',
+            ],
         );
 
         $user = $this->Users->find()->where(['username' => 'nate'])->firstOrFail();
@@ -704,7 +703,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
             [],
-            ['code' => $form->getTfa()->getCode($user->secret)]
+            ['code' => $form->getTfa()->getCode($user->secret)],
         );
         $request->getAttribute('session')->write('TwoFactorAuth.user', $user);
 
