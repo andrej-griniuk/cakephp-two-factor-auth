@@ -101,7 +101,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
 
         if (!$this->_verifyCode($this->_getUserSecret($user), $code)) {
             // 2nd factor auth code is invalid
-            return new Result(null, Result::TWO_FACTOR_AUTH_FAILED);
+            return new Result($user, Result::TWO_FACTOR_AUTH_FAILED);
         }
 
         $this->_unsetSessionUser($request);
