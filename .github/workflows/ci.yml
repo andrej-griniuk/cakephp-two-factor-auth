@@ -9,17 +9,18 @@ permissions:
   contents: read
 
 env:
-  UBUNTU_VERSION: &ubuntu_version ubuntu-24.04
-  WINDOWS_VERSION: &windows_version windows-2022
-  PHP_VERSION: &php_version 8.4
+  UBUNTU_VERSION: ubuntu-24.04
+  WINDOWS_VERSION: windows-2022
+  PHP_VERSION: 8.4
 
 jobs:
   testsuite:
-    runs-on: *ubuntu_version
+    name: Testsuite
+    runs-on: ${{ env.UBUNTU_VERSION }}
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.4']
+        php-version: ['8.1', ${{ env.PHP_VERSION }}]
 
     steps:
       - uses: actions/checkout@v4
@@ -35,22 +36,28 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run PHPUnit (no coverage)
-        if: ${{ matrix.php-version != '8.4' }}
+        if: ${{ matrix.php-version != env.PHP_VERSION }}
         run: vendor/bin/phpunit --display-deprecations --display-warnings
 
       - name: Run PHPUnit (with coverage)
-        if: ${{ matrix.php-version == '8.4' }}
-        run: vendor/bin/phpunit --display-deprecations --display-warnings --coverage-clover coverage.xml
+        if: ${{ matrix.php-version == env.PHP_VERSION }}
+        run: vendor/bin/phpunit --display-deprecations --display-warnings --log-junit junit.xml --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.php-version == '8.4' }}
+        if: ${{ matrix.php-version == env.PHP_VERSION }}
         uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload test results to Codecov
+        if: ${{ matrix.php-version == env.PHP_VERSION }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   cs-stan:
     name: Coding Standard & Static Analysis
-    runs-on: *ubuntu_version
+    runs-on: ${{ env.UBUNTU_VERSION }}
 
     steps:
       - uses: actions/checkout@v4
@@ -58,7 +65,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: *php_version
+          php-version: ${{ env.PHP_VERSION }}
           coverage: none
           tools: cs2pr
 
@@ -76,8 +83,8 @@ jobs:
         run: vendor/bin/phpstan analyse --error-format=github
 
   testsuite-windows:
-    runs-on: *windows_version
-    name: Windows - PHP 8.5
+    runs-on: ${{ env.UBUNTU_VERSION }}
+    name: Windows Testsuite
 
     steps:
       - uses: actions/checkout@v4
@@ -85,7 +92,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: *php_version
+          php-version: ${{ env.PHP_VERSION }}
           extensions: intl, mbstring, pdo_sqlite
           ini-values: apc.enable_cli = 1
 
