@@ -8,9 +8,14 @@ on:
 permissions:
   contents: read
 
+env:
+  UBUNTU_VERSION: &ubuntu_version ubuntu-24.04
+  WINDOWS_VERSION: &windows_version windows-2022
+  PHP_VERSION: &php_version 8.5
+
 jobs:
   testsuite:
-    runs-on: ubuntu-latest
+    runs-on: *ubuntu_version
     strategy:
       fail-fast: false
       matrix:
@@ -30,11 +35,17 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --display-deprecations --display-warnings
+        run: vendor/bin/phpunit --display-deprecations --display-warnings --coverage-clover coverage.xml
+
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.php-version == '8.5' }}
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   cs-stan:
     name: Coding Standard & Static Analysis
-    runs-on: ubuntu-latest
+    runs-on: *ubuntu_version
 
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +53,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5'
+          php-version: *php_version
           coverage: none
           tools: cs2pr
 
@@ -60,7 +71,7 @@ jobs:
         run: vendor/bin/phpstan analyse --error-format=github
 
   testsuite-windows:
-    runs-on: windows-2022
+    runs-on: *windows_version
     name: Windows - PHP 8.5
 
     steps:
@@ -69,7 +80,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: *php_version
           extensions: intl, mbstring, pdo_sqlite
           ini-values: apc.enable_cli = 1
 
