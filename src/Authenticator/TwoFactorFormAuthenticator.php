@@ -9,8 +9,11 @@ use Authentication\Authenticator\ResultInterface;
 use Authentication\UrlChecker\UrlCheckerTrait;
 use Cake\Utility\Hash;
 use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use RobThree\Auth\Algorithm;
+use RobThree\Auth\Providers\Qr\IQRCodeProvider;
+use RobThree\Auth\Providers\Qr\QRServerProvider;
 use RobThree\Auth\TwoFactorAuth;
 
 /**
@@ -56,7 +59,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         'digits' => 6,
         'period' => 30,
         'algorithm' => Algorithm::Sha1,
-        'qrcodeprovider' => null,
+        'qrcodeprovider' => QRServerProvider::class,
         'rngprovider' => null,
         'timeprovider' => null,
     ];
@@ -228,12 +231,21 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     public function getTfa(): TwoFactorAuth
     {
         if (!$this->_tfa) {
+            $qrcodeProviderClass = $this->getConfig('qrcodeprovider');
+            $qrcodeProvider = new $qrcodeProviderClass();
+
+            if (!$qrcodeProvider instanceof IQRCodeProvider) {
+                throw new InvalidArgumentException(
+                    sprintf('QRCode provider must implement %s.', IQRCodeProvider::class),
+                );
+            }
+
             $this->_tfa = new TwoFactorAuth(
+                $qrcodeProvider,
                 $this->getConfig('issuer'),
                 $this->getConfig('digits'),
                 $this->getConfig('period'),
                 $this->getConfig('algorithm'),
-                $this->getConfig('qrcodeprovider'),
                 $this->getConfig('rngprovider'),
                 $this->getConfig('timeprovider'),
             );

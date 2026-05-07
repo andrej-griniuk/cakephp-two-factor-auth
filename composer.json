@@ -12,10 +12,10 @@
         }
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "cakephp/cakephp": "^5.0",
         "cakephp/authentication": "^3.0 || ^4.0",
-        "robthree/twofactorauth": "^2.1"
+        "robthree/twofactorauth": "^3.0"
     },
     "require-dev": {
         "cakedc/cakephp-phpstan": "^4.0",

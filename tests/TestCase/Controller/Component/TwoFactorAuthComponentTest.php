@@ -80,7 +80,7 @@ class TwoFactorAuthComponentTest extends TestCase
     public function testCreateSecret(): void
     {
         $secret = $this->TwoFactorAuth->createSecret();
-        $this->assertSame(16, strlen($secret));
+        $this->assertSame(32, strlen($secret));
     }
 
     /**

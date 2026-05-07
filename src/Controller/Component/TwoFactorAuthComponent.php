@@ -27,14 +27,13 @@ class TwoFactorAuthComponent extends Component
     /**
      * Create 2FA secret
      *
-     * @param int  $bits                Number of bits
-     * @param bool $requireCryptoSecure Require crypto secure
+     * @param int  $bits    Number of bits
      * @return string
      * @throws \RobThree\Auth\TwoFactorAuthException
      */
-    public function createSecret(int $bits = 80, bool $requireCryptoSecure = true): string
+    public function createSecret(int $bits = 160): string
     {
-        return $this->getTfa()->createSecret($bits, $requireCryptoSecure);
+        return $this->getTfa()->createSecret($bits);
     }
 
     /**
