@@ -34,7 +34,12 @@ jobs:
       - name: Composer install
         uses: ramsey/composer-install@v3
 
-      - name: Run PHPUnit
+      - name: Run PHPUnit (no coverage)
+        if: ${{ matrix.php-version != '8.5' }}
+        run: vendor/bin/phpunit --display-deprecations --display-warnings
+
+      - name: Run PHPUnit (with coverage)
+        if: ${{ matrix.php-version == '8.5' }}
         run: vendor/bin/phpunit --display-deprecations --display-warnings --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
