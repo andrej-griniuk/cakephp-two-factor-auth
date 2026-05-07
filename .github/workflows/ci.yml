@@ -8,12 +8,10 @@ on:
 permissions:
   contents: read
 
-x-ubuntu-version: &ubuntu_version ubuntu-24.04
-x-windows-version: &windows_version windows-2022
-x-php-version: &php_version '8.4'
-
 env:
-  PHP_VERSION: *php_version
+  UBUNTU_VERSION: &ubuntu_version ubuntu-24.04
+  WINDOWS_VERSION: &windows_version windows-2022
+  PHP_VERSION: &php_version 8.4
 
 jobs:
   testsuite:
