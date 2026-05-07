@@ -80,7 +80,7 @@ class TwoFactorAuthComponentTest extends TestCase
     public function testCreateSecret(): void
     {
         $secret = $this->TwoFactorAuth->createSecret();
-        $this->assertNotNull($secret);
+        $this->assertSame(16, strlen($secret));
     }
 
     /**
@@ -117,6 +117,6 @@ class TwoFactorAuthComponentTest extends TestCase
     public function testGetQRCodeImageAsDataUri(): void
     {
         $uri = $this->TwoFactorAuth->getQRCodeImageAsDataUri('label', $this->TwoFactorAuth->getTfa()->createSecret());
-        $this->assertNotNull($uri);
+        $this->assertStringStartsWith('data:image/png;base64,', $uri);
     }
 }

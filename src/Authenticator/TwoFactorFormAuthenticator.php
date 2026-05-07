@@ -40,7 +40,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * - `rngprovider` Random Number Generator provider.
      * - `timeprovider` Time provider.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
         'loginUrl' => null,
@@ -75,7 +75,12 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
             return $this->_buildLoginUrlErrorResult($request);
         }
 
-        $code = Hash::get($request->getParsedBody(), $this->getConfig('codeField'));
+        $parsedBody = $request->getParsedBody();
+        if (!is_array($parsedBody)) {
+            $parsedBody = [];
+        }
+
+        $code = Hash::get($parsedBody, $this->getConfig('codeField'));
         if (!is_null($code)) {
             return $this->authenticateCode($request, (string)$code);
         } else {
@@ -98,7 +103,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
             return new Result(null, Result::FAILURE_CREDENTIALS_MISSING);
         }
 
-        if (!$this->_verifyCode($this->_getUserSecret($user), $code)) {
+        if (!$this->_verifyCode($this->_getUserSecret($user) ?: '', $code)) {
             // 2nd factor auth code is invalid
             return new Result($user, Result::TWO_FACTOR_AUTH_FAILED);
         }
@@ -119,12 +124,14 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         $result = parent::authenticate($request);
 
         $user = $result->getData();
-        if (
-            !$result->isValid()
-            || !$this->_getUser2faEnabledStatus($user)
-            || !$this->_getUserSecret($user)
-        ) {
-            // The user is invalid or the 2FA secret is not enabled/present
+
+        // Check if user is valid and is an ArrayAccess instance
+        if (!$result->isValid() || !($user instanceof ArrayAccess)) {
+            return $result;
+        }
+
+        // Check if 2FA is enabled and secret is present
+        if (!$this->_getUser2faEnabledStatus($user) || !$this->_getUserSecret($user)) {
             return $result;
         }
 
@@ -154,7 +161,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Get pre-authenticated user from the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @return \ArrayAccess|null
+     * @return \ArrayAccess<string, mixed>|null
      */
     protected function _getSessionUser(ServerRequestInterface $request): ?ArrayAccess
     {
@@ -168,7 +175,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
      * Store pre-authenticated user in the session
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request Request object
-     * @param \ArrayAccess                             $user    User
+     * @param \ArrayAccess<string, mixed>              $user    User
      */
     protected function _setSessionUser(ServerRequestInterface $request, ArrayAccess $user): void
     {
@@ -193,7 +200,7 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Get user's 2FA secret
      *
-     * @param \ArrayAccess $user User
+     * @param \ArrayAccess<string, mixed> $user User
      * @return string|null
      */
     protected function _getUserSecret(ArrayAccess $user): ?string
@@ -204,9 +211,10 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     /**
      * Check if 2FA is enabled for the given user
      *
-     * @param \ArrayAccess|array $user User
+     * @param \ArrayAccess<string, mixed>|array<string, mixed> $user User
      * @return bool
      */
+
     protected function _getUser2faEnabledStatus(array|ArrayAccess $user): bool
     {
         return (bool)Hash::get($user, $this->getConfig('isEnabled2faProperty', $this->getConfig('secretProperty')));

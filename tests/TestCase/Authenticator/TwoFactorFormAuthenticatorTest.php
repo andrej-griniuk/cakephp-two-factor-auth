@@ -16,9 +16,7 @@ use TwoFactorAuth\Authenticator\TwoFactorFormAuthenticator;
 class TwoFactorFormAuthenticatorTest extends TestCase
 {
     /**
-     * Fixtures
-     *
-     * @var array
+     * @var array<string>
      */
     public array $fixtures = [
         'app.Users',
@@ -442,7 +440,6 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             [],
             ['username' => 'mariano', 'password' => 'password']
         );
-        $response = new Response();
 
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
@@ -455,7 +452,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             ]
         );
 
-        $result = $form->authenticate($request, $response);
+        $result = $form->authenticate($request);
 
         $this->assertInstanceOf(Result::class, $result);
         $this->assertEquals(Result::SUCCESS, $result->getStatus());
@@ -691,7 +688,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      * testAuthenticateTwoFactorCorrectCode
      *
      * @return void
-     * @throws TwoFactorAuthException
+     * @throws \RobThree\Auth\TwoFactorAuthException
      */
     public function testAuthenticateTwoFactorCorrectCode()
     {
