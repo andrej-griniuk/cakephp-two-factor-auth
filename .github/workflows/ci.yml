@@ -28,16 +28,9 @@ jobs:
 
       - name: Composer install
         uses: ramsey/composer-install@v3
-        with:
-          dependency-versions: ${{ matrix.dependencies }}
 
       - name: Run PHPUnit
-        run: |
-          if [[ ${{ matrix.dependencies }} == 'highest' ]]; then
-            vendor/bin/phpunit --display-skipped --display-deprecations --display-warnings
-          else
-            vendor/bin/phpunit --display-deprecations --display-warnings
-          fi
+        run: vendor/bin/phpunit --display-deprecations --display-warnings
 
   cs-stan:
     name: Coding Standard & Static Analysis

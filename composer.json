@@ -20,7 +20,7 @@
     "require-dev": {
         "cakedc/cakephp-phpstan": "^4.0",
         "cakephp/cakephp-codesniffer": "^5.3",
-        "phpunit/phpunit": "^10"
+        "phpunit/phpunit": "^10 || ^11"
     },
     "autoload": {
         "psr-4": {
