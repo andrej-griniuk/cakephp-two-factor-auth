@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace TwoFactorAuth\Test\TestCase\Authenticator;
 
 use Authentication\Authenticator\Result;
-use Authentication\Identifier\IdentifierCollection;
+use Authentication\Identifier\IdentifierFactory;
+use Authentication\Identifier\IdentifierInterface;
 use Cake\Http\ServerRequestFactory;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -62,11 +63,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticate()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
@@ -88,11 +85,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testCredentialsNotPresent()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
@@ -116,11 +109,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testCredentialsEmpty()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
@@ -144,11 +133,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testSingleLoginUrlMismatch()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
@@ -177,11 +162,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testMultipleLoginUrlMismatch()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/does-not-match'],
@@ -192,6 +173,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
+                'urlChecker' => 'Authentication.Multi',
                 'loginUrl' => [
                     '/en/users/login',
                     '/de/users/login',
@@ -213,11 +195,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testLoginUrlMismatchWithBase()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
@@ -247,11 +225,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testSingleLoginUrlSuccess()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/Users/login'],
@@ -280,11 +254,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testMultipleLoginUrlSuccess()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/de/users/login'],
@@ -295,6 +265,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
         $form = new TwoFactorFormAuthenticator(
             $identifiers,
             [
+                'urlChecker' => 'Authentication.Multi',
                 'loginUrl' => [
                     '/en/users/login',
                     '/de/users/login',
@@ -316,11 +287,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testLoginUrlSuccessWithBase()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
@@ -350,11 +317,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testRegexLoginUrlSuccess()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/de/users/login'],
@@ -367,6 +330,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             [
                 'loginUrl' => '%^/[a-z]{2}/users/login/?$%',
                 'urlChecker' => [
+                    'className' => 'Authentication.String',
                     'useRegex' => true,
                 ],
             ],
@@ -386,11 +350,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testFullRegexLoginUrlFailure()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             [
@@ -425,11 +385,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testFullRegexLoginUrlSuccess()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             [
@@ -445,6 +401,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
             [
                 'loginUrl' => '%auth\.localhost/[a-z]{2}/users/login/?$%',
                 'urlChecker' => [
+                    'className' => 'Authentication.String',
                     'useRegex' => true,
                     'checkFullUrl' => true,
                 ],
@@ -465,7 +422,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateCustomFields()
     {
-        $identifiers = $this->createMock(IdentifierCollection::class);
+        $identifiers = $this->createMock(IdentifierInterface::class);
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
@@ -509,7 +466,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateValidData()
     {
-        $identifiers = $this->createMock(IdentifierCollection::class);
+        $identifiers = $this->createMock(IdentifierInterface::class);
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
@@ -549,7 +506,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateMissingChecker()
     {
-        $identifiers = $this->createMock(IdentifierCollection::class);
+        $identifiers = $this->createMock(IdentifierInterface::class);
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
@@ -578,7 +535,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateInvalidChecker()
     {
-        $identifiers = $this->createMock(IdentifierCollection::class);
+        $identifiers = $this->createMock(IdentifierInterface::class);
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/users/login'],
@@ -610,11 +567,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateTwoFactorRequired()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
@@ -636,11 +589,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateTwoFactorInvalidCode()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
@@ -664,11 +613,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateTwoFactorWithCodeNoUser()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/testpath'],
@@ -691,11 +636,7 @@ class TwoFactorFormAuthenticatorTest extends TestCase
      */
     public function testAuthenticateTwoFactorCorrectCode()
     {
-        $identifiers = new IdentifierCollection(
-            [
-                'Authentication.Password',
-            ],
-        );
+        $identifiers = IdentifierFactory::create('Authentication.Password');
 
         $user = $this->Users->find()->where(['username' => 'nate'])->firstOrFail();
         $form = new TwoFactorFormAuthenticator($identifiers);

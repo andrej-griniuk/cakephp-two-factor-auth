@@ -9,7 +9,7 @@ declare(strict_types=1);
  * installed as a dependency of an application.
  */
 
-use Authentication\Plugin as AuthPlugin;
+use Authentication\AuthenticationPlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\Fixture\SchemaLoader;
@@ -61,7 +61,7 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-Plugin::getCollection()->add(new AuthPlugin());
+Plugin::getCollection()->add(new AuthenticationPlugin());
 
 $_SERVER['PHP_SELF'] = '/';
 
