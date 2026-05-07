@@ -8,15 +8,17 @@ on:
 permissions:
   contents: read
 
+x-ubuntu-version: &ubuntu_version ubuntu-24.04
+x-windows-version: &windows_version windows-2022
+x-php-version: &php_version '8.4'
+
 env:
-  UBUNTU_VERSION: ubuntu-24.04
-  WINDOWS_VERSION: windows-2022
-  PHP_VERSION: 8.4
+  PHP_VERSION: *php_version
 
 jobs:
   testsuite:
     name: Testsuite
-    runs-on: ${{ env.UBUNTU_VERSION }}
+    runs-on: *ubuntu_version
     strategy:
       fail-fast: false
       matrix:
@@ -57,7 +59,7 @@ jobs:
 
   cs-stan:
     name: Coding Standard & Static Analysis
-    runs-on: ${{ env.UBUNTU_VERSION }}
+    runs-on: *ubuntu_version
 
     steps:
       - uses: actions/checkout@v4
@@ -83,7 +85,7 @@ jobs:
         run: vendor/bin/phpstan analyse --error-format=github
 
   testsuite-windows:
-    runs-on: ${{ env.UBUNTU_VERSION }}
+    runs-on: *windows_version
     name: Windows Testsuite
 
     steps:
