@@ -72,18 +72,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
-        $fields = [
-            'username' => 'username',
-            'password' => 'password'
-        ];
-
-        // Load identifiers
-        $passwordIdentifier = [
-           'Authentication.Password' => [
-              'fields' => $fields,
-           ],
-        ];
-
         $service = new AuthenticationService();
         $service->setConfig([
             'unauthenticatedRedirect' => '/users/login',
@@ -91,12 +79,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         ]);
 
         // Load the authenticators, you want session first
-        $service->loadAuthenticator('Authentication.Session', [
-           'identifier' => $passwordIdentifier,
-        ]);
+        $service->loadAuthenticator('Authentication.Session');
         $service->loadAuthenticator('TwoFactorAuth.TwoFactorForm', [
-           'identifier' => $passwordIdentifier,
-           'fields' => $fields,
+           'identifier' => 'Authentication.Password',
            'loginUrl' => '/users/login',
         ]);
 

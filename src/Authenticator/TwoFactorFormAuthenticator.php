@@ -6,7 +6,6 @@ namespace TwoFactorAuth\Authenticator;
 use ArrayAccess;
 use Authentication\Authenticator\FormAuthenticator as CakeFormAuthenticator;
 use Authentication\Authenticator\ResultInterface;
-use Authentication\Identifier\AbstractIdentifier;
 use Authentication\UrlChecker\UrlCheckerTrait;
 use Cake\Utility\Hash;
 use Exception;
@@ -48,8 +47,8 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
         'userSessionKey' => 'TwoFactorAuth.user',
         'urlChecker' => 'Authentication.Default',
         'fields' => [
-            AbstractIdentifier::CREDENTIAL_USERNAME => 'username',
-            AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+            'username' => 'username',
+            'password' => 'password',
         ],
         'codeField' => 'code',
         'secretProperty' => 'secret',
