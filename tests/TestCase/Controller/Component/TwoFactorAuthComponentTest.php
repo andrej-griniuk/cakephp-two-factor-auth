@@ -50,7 +50,7 @@ class TwoFactorAuthComponentTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_URI' => '/'],
             [],
-            ['username' => 'mariano', 'password' => 'password']
+            ['username' => 'mariano', 'password' => 'password'],
         );
         $request = $request->withAttribute('authentication', $service);
         $controller = new Controller($request, 'Users');

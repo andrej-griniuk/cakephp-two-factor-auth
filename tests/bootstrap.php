@@ -48,13 +48,13 @@ if (file_exists($root . '/config/bootstrap.php')) {
 Configure::write(
     'App',
     [
-    'namespace' => 'TwoFactorAuth',
-    'paths' => [
-        'plugins' => [ROOT . 'Plugin' . DS],
-        'templates' => [ROOT . 'templates' . DS],
+        'namespace' => 'TwoFactorAuth',
+        'paths' => [
+            'plugins' => [ROOT . 'Plugin' . DS],
+            'templates' => [ROOT . 'templates' . DS],
+        ],
+        'encoding' => 'UTF-8',
     ],
-    'encoding' => 'UTF-8',
-    ]
 );
 
 if (!getenv('db_dsn')) {
