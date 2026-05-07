@@ -11,7 +11,7 @@ permissions:
 env:
   UBUNTU_VERSION: &ubuntu_version ubuntu-24.04
   WINDOWS_VERSION: &windows_version windows-2022
-  PHP_VERSION: &php_version 8.5
+  PHP_VERSION: &php_version 8.4
 
 jobs:
   testsuite:
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.5']
+        php-version: ['8.1', '8.4']
 
     steps:
       - uses: actions/checkout@v4
@@ -35,15 +35,15 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run PHPUnit (no coverage)
-        if: ${{ matrix.php-version != '8.5' }}
+        if: ${{ matrix.php-version != '8.4' }}
         run: vendor/bin/phpunit --display-deprecations --display-warnings
 
       - name: Run PHPUnit (with coverage)
-        if: ${{ matrix.php-version == '8.5' }}
+        if: ${{ matrix.php-version == '8.4' }}
         run: vendor/bin/phpunit --display-deprecations --display-warnings --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.php-version == '8.5' }}
+        if: ${{ matrix.php-version == '8.4' }}
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

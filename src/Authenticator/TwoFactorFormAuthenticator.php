@@ -11,7 +11,6 @@ use Cake\Utility\Hash;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use RobThree\Auth\Algorithm;
-use RobThree\Auth\Providers\Qr\QRServerProvider;
 use RobThree\Auth\TwoFactorAuth;
 
 /**
@@ -230,7 +229,6 @@ class TwoFactorFormAuthenticator extends CakeFormAuthenticator
     {
         if (!$this->_tfa) {
             $this->_tfa = new TwoFactorAuth(
-                new QRServerProvider(),
                 $this->getConfig('issuer'),
                 $this->getConfig('digits'),
                 $this->getConfig('period'),
