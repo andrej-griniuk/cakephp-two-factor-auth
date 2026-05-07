@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  testsuite:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ['8.1', '8.4']
+        dependencies: ['highest']
+        include:
+          - php-version: '8.1'
+            dependencies: 'lowest'
+          - php-version: '8.4'
+            dependencies: 'lowest'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, intl
+          ini-values: zend.assertions = 1
+
+      - name: Composer install
+        uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+
+      - name: Run PHPUnit
+        run: |
+          if [[ ${{ matrix.dependencies }} == 'highest' ]]; then
+            vendor/bin/phpunit --display-skipped --display-deprecations --display-warnings
+          else
+            vendor/bin/phpunit --display-deprecations --display-warnings
+          fi
+
+  testsuite-windows:
+    runs-on: windows-2022
+    name: Windows - PHP 8.4
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: intl, mbstring, pdo_sqlite
+          ini-values: apc.enable_cli = 1
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      - name: Install dependencies
+        run: composer install --no-progress
+
+      - name: Run test suite
+        run: vendor/bin/phpunit --display-deprecations --display-warnings
